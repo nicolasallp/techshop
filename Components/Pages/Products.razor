@@ -1,89 +1,89 @@
 ﻿@page "/"
 
-<div class="flex w-[1250px] bg-white">
-    <div class="p-4 max-w-[220px]">
-        <div class="text-gray-700 text-xl">
-            <div class="p-2.5 mt-1 items-center">
-                <h1 class="font-bold text-gray-700 text-lg mb-2">Price</h1>
-                <div class="flex items-center mb-2 cursor-pointer">
-                    <input id="checkbox-price-1" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300">
-                    <label for="checkbox-price-1" class="cursor-pointer ms-2 text-sm font-medium text-gray-500">R$1 - R$199</label>
+<div class="flex w-[1250px] bg-gray-100">
+    <div class="max-w-[220px] p-4">
+        <div class="text-xl text-gray-700">
+            <div class="mt-1 items-center p-2.5">
+                <h1 class="mb-2 text-lg font-bold text-gray-700">Price</h1>
+                <div class="mb-2 flex cursor-pointer items-center">
+                    <input id="checkbox-price-1" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
+                    <label for="checkbox-price-1" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">R$1 - R$199</label>
                 </div>
-                <div class="flex items-center mb-2 cursor-pointer">
-                    <input id="checkbox-price-2" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300">
-                    <label for="checkbox-price-2" class="cursor-pointer ms-2 text-sm font-medium text-gray-500">R$200 - R$399</label>
+                <div class="mb-2 flex cursor-pointer items-center">
+                    <input id="checkbox-price-2" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
+                    <label for="checkbox-price-2" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">R$200 - R$399</label>
                 </div>
-                <div class="flex items-center mb-2 cursor-pointer">
-                    <input id="checkbox-price-3" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300">
-                    <label for="checkbox-price-3" class="cursor-pointer ms-2 text-sm font-medium text-gray-500">R$400 - R$699</label>
+                <div class="mb-2 flex cursor-pointer items-center">
+                    <input id="checkbox-price-3" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
+                    <label for="checkbox-price-3" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">R$400 - R$699</label>
                 </div>
-                <div class="flex items-center mb-2 cursor-pointer">
-                    <input id="checkbox-price-4" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300">
-                    <label for="checkbox-price-4" class="cursor-pointer ms-2 text-sm font-medium text-gray-500">R$700+</label>
+                <div class="mb-2 flex cursor-pointer items-center">
+                    <input id="checkbox-price-4" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
+                    <label for="checkbox-price-4" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">R$700+</label>
                 </div>
-                <p class="text-sm mb-1 mt-3 text-gray-600">Custom range</p>
-                <div class="flex gap-2 items-center">
-                    <input type="text" id="first_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-base focus:ring-blue-600 focus:border-blue-500 block w-full py-2 px-1 outline-none" placeholder="$" />-
-                    <input type="text" id="first_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-base focus:ring-blue-600 focus:border-blue-500 block w-full py-2 px-1 outline-none" placeholder="$" />
-                </div>
-            </div>
-            <div class="p-2.5 mt-1 items-center">
-                <h1 class="font-bold text-gray-700 text-lg mb-2">Brands</h1>
-                <div class="flex items-center mb-2 cursor-pointer">
-                    <input id="checkbox-brand-1" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300">
-                    <label for="checkbox-brand-1" class="cursor-pointer ms-2 text-sm font-medium text-gray-500">Apple</label>
-                </div>
-                <div class="flex items-center mb-2 cursor-pointer">
-                    <input id="checkbox-brand-2" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300">
-                    <label for="checkbox-brand-2" class="cursor-pointer ms-2 text-sm font-medium text-gray-500">Samsung</label>
-                </div>
-                <div class="flex items-center mb-2 cursor-pointer">
-                    <input id="checkbox-brand-3" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300">
-                    <label for="checkbox-brand-3" class="cursor-pointer ms-2 text-sm font-medium text-gray-500">Xiaomi</label>
-                </div>
-                <div class="flex items-center mb-2 cursor-pointer">
-                    <input id="checkbox-brand-4" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300">
-                    <label for="checkbox-brand-4" class="cursor-pointer ms-2 text-sm font-medium text-gray-500">Motorola</label>
+                <p class="mb-1 mt-3 text-sm text-gray-600">Custom range</p>
+                <div class="flex items-center gap-2">
+                    <input type="text" id="first_name" class="block w-full border border-gray-300 bg-gray-50 px-1 py-2 text-base text-gray-900 outline-none focus:ring-blue-600 focus:border-blue-500" placeholder="$" />-
+                    <input type="text" id="first_name" class="block w-full border border-gray-300 bg-gray-50 px-1 py-2 text-base text-gray-900 outline-none focus:ring-blue-600 focus:border-blue-500" placeholder="$" />
                 </div>
             </div>
-            <div class="p-2.5 mt-1 items-center">
-                <h1 class="font-bold text-gray-700 text-lg mb-2">Rating</h1>
+            <div class="mt-1 items-center p-2.5">
+                <h1 class="mb-2 text-lg font-bold text-gray-700">Brands</h1>
+                <div class="mb-2 flex cursor-pointer items-center">
+                    <input id="checkbox-brand-1" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
+                    <label for="checkbox-brand-1" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">Apple</label>
+                </div>
+                <div class="mb-2 flex cursor-pointer items-center">
+                    <input id="checkbox-brand-2" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
+                    <label for="checkbox-brand-2" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">Samsung</label>
+                </div>
+                <div class="mb-2 flex cursor-pointer items-center">
+                    <input id="checkbox-brand-3" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
+                    <label for="checkbox-brand-3" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">Xiaomi</label>
+                </div>
+                <div class="mb-2 flex cursor-pointer items-center">
+                    <input id="checkbox-brand-4" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
+                    <label for="checkbox-brand-4" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">Motorola</label>
+                </div>
+            </div>
+            <div class="mt-1 items-center p-2.5">
+                <h1 class="mb-2 text-lg font-bold text-gray-700">Rating</h1>
             </div>
         </div>
     </div>
-    <span class="w-[1px] bg-gray-300 h-full"></span>
+    <span class="h-full w-[1px] bg-gray-300"></span>
     <div class="w-full">
         <div>
-            <div class="p-3 mt-6 mb-2 mx-4 flex items-center bg-gray-200">
-                <ion-icon name="search" class="text-2xl select-none text-gray-700"></ion-icon>
-                <input type="text" placeholder="Search product" class="text-[15px] text-gray-700 outline-none ml-3 w-full bg-transparent">
+            <div class="mx-4 mb-2 mt-6 flex items-center bg-gray-200 p-3">
+                <ion-icon name="search" class="select-none text-2xl text-gray-700"></ion-icon>
+                <input type="text" placeholder="Search product" class="ml-3 w-full bg-transparent text-[15px] text-gray-700 outline-none">
             </div>
         </div>
         <div class="flex flex-wrap">
             <div class="m-4">
-                <div class="w-[300px] h-fit border border-gray-300 hover:border-blue-600">
+                <div class="h-fit w-[300px] border border-gray-300 hover:border-blue-600">
                     <a href="#">
                         <div>
-                            <img class="size-[200px] object-contain m-auto" src="https://flowbite.com/docs/images/products/apple-watch.png" alt="product image" />
+                            <img class="m-auto size-[200px] object-contain" src="https://flowbite.com/docs/images/products/apple-watch.png" alt="product image" />
                         </div>
-                        <div class="px-5 mb-2">
-                            <h5 class="text-[16px] mb-1 font-semibold tracking-tight text-gray-700">Apple Watch Series 7 GPS, Aluminium Case, Starlight Sport</h5>
+                        <div class="mb-2 px-5">
+                            <h5 class="mb-1 font-semibold tracking-tight text-[16px] text-gray-700">Apple Watch Series 7 GPS, Aluminium Case, Starlight Sport</h5>
                             <div class="flex justify-between">
                                 <span class="text-lg font-bold text-gray-900">$599.99</span>
                                 <div class="flex items-center">
-                                    <svg class="w-4 h-4 text-yellow-500 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                    <svg class="ms-1 h-4 w-4 text-yellow-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
                                         <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                                     </svg>
-                                    <svg class="w-4 h-4 text-yellow-500 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                    <svg class="ms-1 h-4 w-4 text-yellow-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
                                         <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                                     </svg>
-                                    <svg class="w-4 h-4 text-yellow-500 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                    <svg class="ms-1 h-4 w-4 text-yellow-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
                                         <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                                     </svg>
-                                    <svg class="w-4 h-4 text-yellow-500 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                    <svg class="ms-1 h-4 w-4 text-yellow-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
                                         <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                                     </svg>
-                                    <svg class="w-4 h-4 ms-1 text-gray-300 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                    <svg class="ms-1 h-4 w-4 text-gray-300 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
                                         <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                                     </svg>
                                 </div>
@@ -92,7 +92,7 @@
                     </a>
                 </div>
                 <div class="flex">
-                    <button href="#" class="text-white bg-blue-700 hover:bg-blue-600 focus:outline-offset-2 focus:outline-black font-medium text-sm py-3.5 text-center w-full">Add to cart</button>
+                    <button href="#" class="w-full bg-blue-700 py-3.5 text-center text-sm font-medium text-white hover:bg-blue-600 focus:outline-offset-2 focus:outline-black">Add to cart</button>
                 </div>
             </div>
         </div>
