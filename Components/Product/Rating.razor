@@ -4,9 +4,12 @@
 
     [Parameter]
     public int Count { get; set; }
+
+    [Parameter]
+    public string? Class { get; set; }
 }
 
-<div class="flex w-fit items-center @(Count < 0 ? "mb-4 cursor-pointer border hover:border hover:border-blue-600" : "")">
+<div class="flex w-fit items-center @Class">
     @for (int i = 0; i < 5; i++)
     {
         <svg class="ms-1 h-4 w-4 @(i < Average ? "text-blue-600" : "text-gray-300")" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
