@@ -1,4 +1,9 @@
 ﻿@page "/Cart"
+@rendermode InteractiveServer
+
+@code {
+    bool showModal;
+}
 
 <PageTitle>My Cart | TechShop</PageTitle>
 
@@ -8,8 +13,8 @@
         <ProductCart />
         <div class="flex items-center justify-between">
             <h2 class="text-xl font-semibold text-gray-800">Total: <span class="text-blue-800">$1854.32</span></h2>
-            <button href="#" class="bg-blue-700 px-3 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-600 focus:outline-offset-2 focus:outline-black active:bg-blue-800">Finish order</button>
+            <button class="bg-blue-700 px-3 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-600 active:bg-blue-800" @onclick="() => showModal = true">Finish order</button>
         </div>
     </div>
-
 </div>
+<Modal isVisible="showModal" />
