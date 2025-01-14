@@ -1,0 +1,66 @@
+﻿@code {
+    [Parameter]
+    public bool isVisible { get; set; }
+
+    [Parameter]
+    public Action onClose { get; set; }
+}
+
+@if (isVisible)
+{
+    <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-25">
+        <div class="flex w-fit flex-col">
+            <button class="place-self-start text-xl font-semibold text-white" @onclick="onClose">X</button>
+            <div class="bg-white p-4">
+                <form>
+                    <div class="mb-3">
+                        <div class="w-full">
+                            <label for="address1" class="mb-2 block text-sm font-medium text-gray-700">Address Line 1<span class="ml-2 text-red-500">*</span></label>
+                            <input type="text" id="street" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-gray-800" required />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address2" class="mb-2 block text-sm font-medium text-gray-700">Address Line 2</label>
+                        <input type="text" id="email" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-gray-800"/>
+                    </div>
+                    <div class="flex gap-3">
+                        <div class="mb-3 w-full">
+                            <div class="w-full">
+                                <label for="city" class="mb-2 block text-sm font-medium text-gray-700">City<span class="ml-2 text-red-500">*</span></label>
+                                <input type="text" id="street" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-gray-800" required />
+                            </div>
+                        </div>
+                        <div class="mb-3 w-full">
+                            <label for="state" class="mb-2 block text-sm font-medium text-gray-700">State / Province<span class="ml-2 text-red-500">*</span></label>
+                            <input type="text" id="email" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-gray-800" />
+                        </div>
+                        <div class="mb-3 w-full">
+                            <label for="zip" class="mb-2 block text-sm font-medium text-gray-700">ZIP / Postal Code<span class="ml-2 text-red-500">*</span></label>
+                            <input type="text" id="email" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-gray-800" />
+                        </div>
+
+                    </div>
+                </form>
+                <hr class="mb-4 mt-2" />
+                <div class="my-6 w-[300px]">
+                    <div class="flex justify-between text-gray-700">
+                        <p>Subtotal:</p>
+                        <span>$1859.32</span>
+                    </div>
+                    <hr class="my-2" />
+                    <div class="flex justify-between text-gray-700">
+                        <p>Delivery fee:</p>
+                        <span>$10.99</span>
+                    </div>
+                    <hr class="my-2" />
+                    <div class="mb-3 flex justify-between">
+                        <p class="font-bold text-gray-800">Total:</p>
+                        <span class="font-bold text-gray-800">$1874.32</span>
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-600 active:bg-blue-800">Finish order</button>
+            </div>
+
+        </div>
+    </div>
+}
