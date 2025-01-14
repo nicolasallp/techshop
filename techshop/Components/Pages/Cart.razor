@@ -12,9 +12,25 @@
     <div class="h-full">
         <ProductCart />
         <div class="flex items-center justify-between">
-            <h2 class="text-xl font-semibold text-gray-800">Total: <span class="text-blue-800">$1854.32</span></h2>
-            <button class="bg-blue-700 px-3 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-600 active:bg-blue-800" @onclick="() => showModal = true">Finish order</button>
+            <div class="w-[300px] text-sm">
+                <div class="flex justify-between text-gray-700">
+                    <p>Subtotal:</p>
+                    <span>$1859.32</span>
+                </div>
+                <hr class="my-2"/>
+                <div class="flex justify-between text-gray-700">
+                    <p>Delivery fee:</p>
+                    <span>$10.99</span>
+                </div>
+                <hr class="my-2" />
+                <div class="mb-3 flex justify-between">
+                    <p class="font-bold text-gray-800">Total:</p>
+                    <span class="font-bold text-gray-800">$1874.32</span>
+                </div>
+                <button class="bg-blue-700 px-3 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-600 active:bg-blue-800" @onclick="() => showModal = true">Proceed to checkout</button>
+            </div>
+
         </div>
     </div>
 </div>
-<Modal isVisible="showModal" />
+<ModalCart isVisible="showModal" onClose="() => showModal = false" />
