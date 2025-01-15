@@ -1,28 +1,33 @@
-﻿<div class="flex w-64 flex-col bg-gray-800">
+﻿@code {
+    [Parameter]
+    public int Selected { get; set; }
+}
+
+<div class="flex w-64 flex-col bg-gray-800">
     <div class="py-3">
         <h1 class="text-center text-2xl font-semibold text-white">Admin Panel</h1>
     </div>
     <hr class="border-gray-300"/>
     <ul class="flex-1 mt-3 text-lg text-white">
         <li class="w-full">
-            <NavLink href="Add" class="mb-2 block w-full cursor-pointer px-3 py-3 hover:bg-gray-700">
+            <a href="Add" class="mb-2 block w-full cursor-pointer px-3 py-3 @(Selected == 0 ? "bg-gray-300 text-gray-800" : "hover:bg-gray-700")">
                 Add Product
-            </NavLink>
+            </a>
         </li>
         <li class="w-full">
-            <NavLink href="Manage" class="mb-2 block w-full cursor-pointer px-3 py-3 hover:bg-gray-700">
+            <a href="Manage" class="mb-2 block w-full cursor-pointer px-3 py-3 @(Selected == 1 ? "bg-gray-300 text-gray-800" : "hover:bg-gray-700")">
                 Manage Products
-            </NavLink>
+            </a>
         </li>
         <li class="w-full">
-            <NavLink href="Orders" class="mb-2 block w-full cursor-pointer px-3 py-3 hover:bg-gray-700">
+            <a href="Orders" class="mb-2 block w-full cursor-pointer px-3 py-3 @(Selected == 2 ? "bg-gray-300 text-gray-800" : "hover:bg-gray-700")">
                 Views Orders
-            </NavLink>
+            </a>
         </li>
         <li class="w-full">
-            <NavLink href="Clients" class="mb-2 block w-full cursor-pointer px-3 py-3 hover:bg-gray-700">
+            <a href="Clients" class="mb-2 block w-full cursor-pointer px-3 py-3 @(Selected == 3 ? "bg-gray-300 text-gray-800" : "hover:bg-gray-700")">
                 List Clients
-            </NavLink>
+            </a>
         </li>
     </ul>
         <hr class="border-gray-300"/>
