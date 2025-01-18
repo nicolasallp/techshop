@@ -5,9 +5,9 @@ VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "techshop", "techshop\techshop.csproj", "{02587047-6B70-4DF5-88CC-833A784E73BB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "techshop-admin", "techshop-admin\techshop-admin.csproj", "{D6E09164-5DCF-4327-A3B4-56614FB1F727}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "techshop_admin", "techshop_admin\techshop_admin.csproj", "{D6E09164-5DCF-4327-A3B4-56614FB1F727}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "techshop-api", "techshop-api\techshop-api.csproj", "{43EAC2B2-C0D5-48CC-A4E5-EA0DD5632120}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "techshop_api", "techshop_api\techshop_api.csproj", "{43EAC2B2-C0D5-48CC-A4E5-EA0DD5632120}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
