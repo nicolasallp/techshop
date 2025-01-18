@@ -1,6 +1,6 @@
 @techshop_api_HostAddress = http://localhost:5280
 
-GET {{techshop_api_HostAddress}}/weatherforecast/
+GET {{techshop_api_HostAddress}}/techsop/
 Accept: application/json
 
 ###
