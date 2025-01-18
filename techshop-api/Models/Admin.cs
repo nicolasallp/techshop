@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace techshop_api.Models
 {
-    [Table("tb_admin")]
+    [Table("admin")]
     public class Admin
     {
         [Key]
