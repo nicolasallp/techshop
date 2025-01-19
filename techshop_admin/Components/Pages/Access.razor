@@ -1,19 +1,57 @@
 ﻿@page "/"
+@inject NavigationManager navigationManager
 
 <div class="flex h-screen w-full items-center justify-center bg-gray-400">
     <div class="w-[400px] bg-gray-100 p-6">
-        <form>
+        <EditForm Model="@Model" OnValidSubmit="Authenticate" FormName="AccessForm">
+            <DataAnnotationsValidator />
             <h1 class="text-center text-xl font-semibold text-blue-950">Admin access</h1>
             <hr class="my-4" />
             <div class="mb-6">
-                <label for="email" class="mb-2 block text-sm font-medium text-gray-700">TechID</label>
-                <input type="email" id="email" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-800" required />
+                <label for="email" class="mb-2 block text-sm font-medium text-gray-700">Email</label>
+                <InputText @bind-Value="Model.Email" id="email" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-800" />
+                <ValidationMessage For="() => Model.Email" class="text-sm text-red-700" />
             </div>
             <div class="mb-2">
                 <label for="password" class="mb-2 block text-sm font-medium text-gray-700">Password</label>
-                <input type="password" id="password" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-800" required />
+                <InputText @bind-Value="Model.Password" id="password" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-800" type="password"/>
+                <ValidationMessage For="() => Model.Password" class="text-sm text-red-700" />
             </div>
-            <a href="Add" class="mt-4 w-full bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-600 active:bg-blue-800">Access</a>
-        </form>
+            <span class="text-sm text-red-700">@errorMessage</span>
+            <button type="submit" class="mt-4 w-full bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-600 active:bg-blue-800">Access</button>
+        </EditForm>
     </div>
 </div>
+
+@code {
+    [CascadingParameter]
+    public HttpContext? HttpContext { get; set; }
+
+    [SupplyParameterFromForm]
+    public AccessViewModel Model { get; set; } = new();
+
+    private HttpClient client = new();
+    private string? errorMessage;
+    private string url = "https://localhost:7259/api/Admins";
+
+
+    public async Task Authenticate() 
+    {
+        HttpResponseMessage response = await client.GetAsync(url);
+        string responseData = await response.Content.ReadAsStringAsync();
+        List<Admin>? Admins = JsonConvert.DeserializeObject<List<Admin>>(responseData);
+        Admin? admin = Admins?.Where(x => x.Email == Model.Email).FirstOrDefault();
+        if (admin is null || !BCrypt.Verify(Model.Password, admin.Password))
+        {
+            errorMessage = "Invalid email or password.";
+            return;
+        }
+
+        Claim claim = new Claim(ClaimTypes.Email, admin.Email);
+        ClaimsIdentity identity = new ClaimsIdentity(new[] {claim}, CookieAuthenticationDefaults.AuthenticationScheme);
+        ClaimsPrincipal principal = new ClaimsPrincipal(identity);
+
+        await HttpContext.SignInAsync(principal);
+        navigationManager.NavigateTo("/Add");
+    }
+}

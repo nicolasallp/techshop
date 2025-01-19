@@ -1,6 +1,9 @@
 ﻿@page "/Add"
+@using Microsoft.AspNetCore.Authorization
+
 @inject IJSRuntime JS
 @rendermode InteractiveServer
+@attribute [Authorize]
 
 <div class="flex h-screen bg-gray-100">
     <Sidebar Selected="0" />

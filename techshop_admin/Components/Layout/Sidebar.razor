@@ -1,7 +1,4 @@
-﻿@code {
-    [Parameter]
-    public int Selected { get; set; }
-}
+﻿@inject NavigationManager navigationManager
 
 <div class="flex w-64 flex-col bg-gray-800">
     <div class="py-3">
@@ -30,8 +27,18 @@
             </a>
         </li>
     </ul>
-        <hr class="border-gray-300"/>
-    <div class="cursor-pointer py-3 font-semibold text-red-500 hover:bg-gray-700">
-        <NavLink class="px-3">Exit Panel</NavLink>
+    <hr class="border-gray-300"/>
+    <div @onclick="ExitPanel" class="cursor-pointer py-3 font-semibold text-red-500 hover:bg-gray-700">
+        <button class="px-3">Exit Panel</button>
     </div>
 </div>
+
+@code {
+    [Parameter]
+    public int Selected { get; set; }
+
+    private void ExitPanel()
+    {
+        navigationManager.NavigateTo("/Logout");
+    }
+}
