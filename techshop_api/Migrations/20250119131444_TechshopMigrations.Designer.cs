@@ -12,8 +12,8 @@ using techshop_api.Data;
 namespace techshop_api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250118154059_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250119131444_TechshopMigrations")]
+    partial class TechshopMigrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -233,8 +233,8 @@ namespace techshop_api.Migrations
                         .HasColumnName("name");
 
                     b.Property<string>("Password")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnName("password");
 
                     b.Property<string>("PostalCode")
