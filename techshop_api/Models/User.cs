@@ -20,7 +20,7 @@ namespace techshop_api.Models
         public string? Email { get; set; }
 
         [Column("password")]
-        [MaxLength(100)]
+        [MaxLength(255)]
         public string? Password { get; set; }
 
         [Column("address1")]
