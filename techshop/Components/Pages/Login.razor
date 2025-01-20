@@ -1,28 +1,61 @@
 ﻿@page "/Login"
+@inject NavigationManager navigation
 
 <PageTitle>Login | TechShop</PageTitle>
 
 <style>
     .back {
-        height: calc(100vh - 64px);
+    height: calc(100vh - 64px);
     }
 </style>
 
 <div class="back flex w-full items-center justify-center">
     <div class="w-[400px] bg-gray-100 p-6">
-        <form>
+        <EditForm Model="Model" OnValidSubmit="Authenticate" FormName="LoginForm">
+            <DataAnnotationsValidator />
             <h1 class="text-center text-2xl font-semibold text-blue-950">Login</h1>
             <hr class="my-4" />
             <div class="mb-6">
                 <label for="email" class="mb-2 block text-sm font-medium text-gray-700">Email address</label>
-                <input type="email" id="email" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-800" placeholder="youremail@example.com" required />
+                <InputText @bind-Value="Model.Email" id="email" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-800" placeholder="youremail@example.com" />
+                <ValidationMessage For="() => Model.Email" class="text-sm text-red-700" />
             </div>
             <div class="mb-2">
                 <label for="password" class="mb-2 block text-sm font-medium text-gray-700">Password</label>
-                <input type="password" id="password" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-800" placeholder="•••••••••" required />
+                <InputText @bind-Value="Model.Password" type="password" id="password" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-800" placeholder="•••••••••" />
+                <ValidationMessage For="() => Model.Password" class="text-sm text-red-700" />
             </div>
+            <span class="text-sm text-red-700">@errorMessage</span>
             <p class="mb-4 text-sm text-gray-700">Don't have an account? <a href="Signup" class="text-blue-700 hover:underline">Signup</a></p>
             <button type="submit" class="w-full bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-600 active:bg-blue-800">Login</button>
-        </form>
+        </EditForm>
     </div>
 </div>
+
+@code {
+    [SupplyParameterFromForm]
+    public LoginViewModel Model { get; set; } = new();
+
+    [CascadingParameter]
+    HttpContext HttpContext { get; set; }
+
+    private string errorMessage;
+
+    private async Task Authenticate()
+    {
+        User user = (await Services.GetData<User>("https://localhost:5280/api/Users"))
+            .Where(x => x.Email == Model.Email).FirstOrDefault();
+        if (user is null || !BCrypt.Verify(Model.Password, user.Password))
+        {
+            errorMessage = "Invalid email or password.";
+            return;
+        }
+
+        Claim claim = new(ClaimTypes.Email, user.Email);
+        ClaimsIdentity identity = new(new[] { claim }, CookieAuthenticationDefaults.AuthenticationScheme);
+        ClaimsPrincipal principal = new(identity);
+
+        await HttpContext.SignInAsync(principal);
+        navigation.NavigateTo("/");
+    }
+}
