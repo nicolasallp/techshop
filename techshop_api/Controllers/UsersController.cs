@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using techshop_api.Data;
+using techshop_api.Dtos.User;
+using techshop_api.Mappers;
 using techshop_api.Models;
 
-namespace techshop_api
+namespace techshop_api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -76,12 +78,13 @@ namespace techshop_api
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult<User>> PostUser(PostUserDto userDto)
         {
+            User user = userDto.ToUserFromPostDto();
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }
 
         // DELETE: api/Users/5
