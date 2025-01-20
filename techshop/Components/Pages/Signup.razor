@@ -1,42 +1,75 @@
 ﻿@page "/Signup"
+@inject NavigationManager navigation
 
 <PageTitle>Signup | TechShop</PageTitle>
 
 <style>
     .back {
-        height: calc(100vh - 64px);
+    height: calc(100vh - 64px);
     }
 </style>
 
 <div class="back flex w-full items-center justify-center">
     <div class="bg-gray-100 p-6">
-        <form>
+        <EditForm Model="Model" OnValidSubmit="RegisterUser" FormName="SignupForm">
+            <DataAnnotationsValidator />
             <h1 class="text-center text-2xl font-semibold text-blue-950">Signup</h1>
             <hr class="my-4"/>
             <div class="mb-6 grid gap-6 md:grid-cols-2">
                 <div>
                     <label for="first_name" class="mb-2 block text-sm font-medium text-gray-700">First name</label>
-                    <input type="text" id="first_name" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-800" placeholder="John" required />
+                    <InputText @bind-Value="Model.FirstName" id="first_name" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-800" placeholder="John" />
+                    <ValidationMessage For="() => Model.FirstName" class="text-sm text-red-700" />
                 </div>
                 <div>
                     <label for="last_name" class="mb-2 block text-sm font-medium text-gray-700">Last name</label>
-                    <input type="text" id="last_name" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-800" placeholder="Doe" required />
+                    <InputText @bind-Value="Model.LastName" id="last_name" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-800" placeholder="Doe" />
+                    <ValidationMessage For="() => Model.LastName" class="text-sm text-red-700" />
                 </div>
             </div>
             <div class="mb-6">
                 <label for="email" class="mb-2 block text-sm font-medium text-gray-700">Email address</label>
-                <input type="email" id="email" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-800" placeholder="youremail@example.com" required />
+                <InputText @bind-Value="Model.Email" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-800" placeholder="youremail@example.com" />
+                <ValidationMessage For="() => Model.Email" class="text-sm text-red-700" />
             </div>
             <div class="mb-6">
                 <label for="password" class="mb-2 block text-sm font-medium text-gray-700">Password</label>
-                <input type="password" id="password" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-800" placeholder="•••••••••" required />
+                <InputText @bind-Value="Model.Password" type="password" id="password" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-800" placeholder="•••••••••" />
+                <ValidationMessage For="() => Model.Password" class="text-sm text-red-700" />
             </div>
             <div class="mb-6">
                 <label for="confirm_password" class="mb-2 block text-sm font-medium text-gray-700">Confirm password</label>
-                <input type="password" id="confirm_password" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900" placeholder="•••••••••" required />
+                <InputText @bind-Value="Model.ConfirmPassword" type="password" id="confirm_password" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900" placeholder="•••••••••" />
+                <ValidationMessage For="() => Model.ConfirmPassword" class="text-sm text-red-700" />
             </div>
+            <span class="text-sm text-red-700">@errorMessage</span>
             <p class="mb-4 text-sm text-gray-700">Already have an account? <a href="Login" class="text-blue-700 hover:underline">Login</a></p>
             <button type="submit" class="w-full bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-600 active:bg-blue-800">Signup</button>
-        </form>
+        </EditForm>
     </div>
 </div>
+
+@code {
+    [SupplyParameterFromForm]
+    public SignupViewModel? Model { get; set; } = new();
+
+    private string errorMessage;
+
+    private async Task RegisterUser()
+    {
+        if (Model.Password != Model.ConfirmPassword)
+        {
+            errorMessage = "Passwords do not match.";
+            return;
+        }
+
+        string data = JsonConvert.SerializeObject(new User
+            {
+                Name = $"{Model.FirstName} {Model.LastName}",
+                Email = Model.Email,
+                Password = BCrypt.HashPassword(Model.Password)
+            });
+        await Services.PostData("https://localhost:5280/api/Users", data);
+        navigation.NavigateTo("/");
+    }
+}
