@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Azure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using techshop_api.Data;
+using techshop_api.DTO;
 using techshop_api.Models;
 
 namespace techshop_api.Controllers
@@ -76,12 +78,50 @@ namespace techshop_api.Controllers
         // POST: api/Products
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Product>> PostProduct(Product product)
+        public async Task<ActionResult<Product>> PostProduct(ProductCreateDTO productDTO)
         {
+            string base64Data = productDTO.Image.Split(",")[0];
+            string fileName = productDTO.Image.Split(",")[1];
+            string contentType = productDTO.Image.Split(",")[2];
+
+            byte[] fileBytes = Convert.FromBase64String(base64Data);
+            using MemoryStream memoryStream = new MemoryStream(fileBytes);
+            IFormFile file = new FormFile(memoryStream, 0, fileBytes.Length, "file", fileName)
+            {
+                Headers = new HeaderDictionary(),
+                ContentType = contentType
+            };
+
+            string extension = Path.GetExtension(file.FileName);
+            string imageName = Guid.NewGuid().ToString() + extension;
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+            using FileStream stream = new FileStream(Path.Combine(path, imageName), FileMode.Create);
+            await file.CopyToAsync(stream);
+
+            Product product = new Product
+            {
+                Name = productDTO.Name,
+                Description = productDTO.Description,
+                Price = productDTO.Price,
+                Brand = productDTO.Brand,
+                Availability = productDTO.Availability,
+                Image = imageName
+            };
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetProduct", new { id = product.Id }, product);
+        }
+
+        [HttpPost("upload")]
+        public async Task<IActionResult> UploadImage(IFormFile file)
+        {
+            string extension = Path.GetExtension(file.FileName);
+            string fileName = Guid.NewGuid().ToString() + extension;
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+            using FileStream stream = new FileStream(Path.Combine(path, fileName), FileMode.Create);
+            await file.CopyToAsync(stream);
+            return Ok(new {FileName = fileName});
         }
 
         // DELETE: api/Products/5
