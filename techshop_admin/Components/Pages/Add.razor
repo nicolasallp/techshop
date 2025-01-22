@@ -2,12 +2,14 @@
 @using Microsoft.AspNetCore.Authorization
 
 @inject IJSRuntime JS
+@inject NavigationManager navigation
 @rendermode InteractiveServer
 @attribute [Authorize]
 
 <div class="flex h-screen bg-gray-100">
     <Sidebar Selected="0" />
-    <div class="m-12 w-[350px]">
+    <EditForm FormName="AddProductForm" Model="Model" OnValidSubmit="AddProduct"  class="m-12 w-[350px]">
+        <DataAnnotationsValidator />
         <p class="mb-2 text-gray-600">Choose the product image.</p>
         <div class="flex h-[300px] w-full items-center justify-center">
             <label for="filezone" class="border-2 flex h-full w-full cursor-pointer flex-col items-center justify-center border-dashed border-gray-300 bg-gray-50 hover:bg-gray-200 @(isImgChosen ? "hidden" : "")">
@@ -21,33 +23,38 @@
                 <InputFile id="filezone" class="hidden" @ref="inputFile" OnChange="PreviewImage"></InputFile>
             </label>
             <div class="h-[300px] w-full @(isImgChosen ? "" : "hidden")">
-                <img @ref="imgElement" class="size-[300px] border border-gray-200 bg-white object-scale-down" />
+                <img @ref="imgElement" class="size-[300px] w-full border border-gray-200 bg-white object-scale-down" />
             </div>
         </div>
         <label for="filezone"><div class="mb-6 mt-2 w-fit cursor-pointer border border-gray-200 bg-white p-1 px-2 hover:bg-gray-100 @(isImgChosen ? "" : "hidden")">Change image</div></label>
         <div class="mb-3 mt-6">
             <label for="name" class="mb-1 block text-sm font-medium text-gray-700">Product name</label>
-            <input type="text" id="name" class="block w-full border border-gray-300 bg-gray-50 p-2.5 font-bold text-gray-800" required />
+            <InputText @bind-Value="Model.Name" type="text" id="name" class="block w-full border border-gray-300 bg-gray-50 p-2.5 font-bold text-gray-800" />
+            <ValidationMessage For="() => Model.Name" class="text-sm text-red-700" />
         </div>
         <div class="mb-3">
             <label for="desc" class="mb-1 block text-sm font-medium text-gray-700">Product description</label>
-            <textarea type="text" id="desc" class="block h-[120px] w-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-800" required />
+            <InputTextArea @bind-Value="Model.Description" type="text" id="desc" class="block h-[120px] w-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-800" />
+            <ValidationMessage For="() => Model.Description" class="text-sm text-red-700" />
         </div>
         <div class="flex gap-4">
             <div class="mb-3">
                 <label for="price" class="mb-1 block text-sm font-medium text-gray-700">Price</label>
                 <div class="flex items-center">
                     <span class="mr-2">$</span>
-                    <input type="text" id="price" class="block w-[100px] border border-gray-300 bg-gray-50 p-2.5 font-bold text-gray-800" required />
+                    <InputText @bind-Value="Model.Price" type="text" id="price" class="block w-[100px] border border-gray-300 bg-gray-50 p-2.5 font-bold text-gray-800" />
                 </div>
+                <ValidationMessage For="() => Model.Price" class="text-sm text-red-700" />
             </div>
             <div class="mb-3">
                 <label for="brand" class="mb-1 block text-sm font-medium text-gray-700">Brand</label>
-                <input type="text" id="brand" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-gray-800" required />
+                <InputText @bind-Value="Model.Brand" type="text" id="brand" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-gray-800" />
+                <ValidationMessage For="() => Model.Brand" class="text-sm text-red-700" />
             </div>
         </div>
-        <button class="mt-4 w-full bg-gray-800 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700 active:bg-gray-900">Add product</button>
-    </div>
+        <span class="text-sm text-red-700">@errorMessage</span>
+        <button type="submit" class="mt-4 w-full bg-gray-800 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700 active:bg-gray-900">Add product</button>
+    </EditForm>
 </div>
 
 <script>
@@ -59,13 +66,38 @@
 </script>
 
 @code {
+    [SupplyParameterFromForm]
+    public AddProductViewModel Model { get; set; } = new();
+
     private InputFile? inputFile;
     private ElementReference imgElement;
-    private bool isImgChosen = false;
+    private IBrowserFile browserFile;
 
-    private async Task PreviewImage()
+    private bool isImgChosen = false;
+    private byte[] imageBytes;
+    private string errorMessage;
+
+    private async Task PreviewImage(InputFileChangeEventArgs e)
     {
         isImgChosen = true;
+        browserFile = e.File;
         await JS.InvokeVoidAsync("previewImage", inputFile!.Element, imgElement);
+    }
+
+    private async Task AddProduct()
+    {
+        MemoryStream memoryStream = new MemoryStream();
+        await browserFile.OpenReadStream().CopyToAsync(memoryStream);
+        imageBytes = memoryStream.ToArray();
+
+        Services.PostData("https://localhost:5280/api/Products", JsonConvert.SerializeObject(new Product
+            {
+                Name = Model.Name,
+                Description = Model.Description,
+                Price = Convert.ToDecimal(Model.Price),
+                Brand = Model.Brand,
+                Image = $"{Convert.ToBase64String(imageBytes)},{browserFile.Name},{browserFile.ContentType}"
+            }));
+        navigation.Refresh(true);
     }
 }
