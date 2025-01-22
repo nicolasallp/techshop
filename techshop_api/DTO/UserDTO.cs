@@ -1,6 +1,6 @@
-﻿namespace techshop_api.Dtos.User
+﻿namespace techshop_api.DTO
 {
-    public class PostUserDto
+    public class UserCreateDTO
     {
         public string? Name { get; set; }
         public string? Email { get; set; }
