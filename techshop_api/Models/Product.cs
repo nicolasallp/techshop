@@ -29,7 +29,7 @@ namespace techshop_api.Models
         public string? Brand { get; set; }
 
         [Column("image")]
-        public byte[]? Image { get; set; }
+        public string? Image { get; set; }
         
         [Column("availability")]
         public int Availability { get; set; }
