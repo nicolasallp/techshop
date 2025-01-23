@@ -15,6 +15,8 @@ namespace techshop_admin.Models.ViewModels
         
         [Required(AllowEmptyStrings = false, ErrorMessage = "Provide the product brand.")]
         public string? Brand { get; set; }
-        public int Availability { get; set; }
+        
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Provide the availability.")]
+        public string? Availability { get; set; }
     }
 }
