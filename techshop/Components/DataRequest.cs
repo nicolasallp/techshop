@@ -5,7 +5,7 @@ using techshop.Models.Entities;
 
 namespace techshop.Components
 {
-    public class Services
+    public class DataRequest
     {
         static HttpClient HttpClient = new();
 

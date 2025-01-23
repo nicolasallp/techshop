@@ -1,6 +1,6 @@
 ﻿namespace techshop.Components
 {
-    public static class ApiRequestURL
+    public static class RequestURL
     {
         public static readonly string Users = "https://localhost:5280/api/Users";
         public static readonly string Products = "https://localhost:5280/api/Products";
