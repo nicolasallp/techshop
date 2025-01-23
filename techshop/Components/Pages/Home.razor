@@ -1,4 +1,6 @@
 ﻿@page "/"
+@using System.Diagnostics
+@rendermode InteractiveServer
 
 <PageTitle>Home | TechShop</PageTitle>
 
@@ -33,28 +35,28 @@
             <div class="items-center p-2.5">
                 <h1 class="mb-2 text-lg font-bold text-gray-700">Brands</h1>
                 <div class="mb-2 flex cursor-pointer items-center">
-                    <input id="checkbox-brand-1" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
+                    <input @onchange='(e) => FilterBrands(e, "Apple")' id="checkbox-brand-1" type="checkbox" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600" />
                     <label for="checkbox-brand-1" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">Apple</label>
                 </div>
                 <div class="mb-2 flex cursor-pointer items-center">
-                    <input id="checkbox-brand-2" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
+                    <input @onchange='(e) => FilterBrands(e, "Samsung")' id="checkbox-brand-2" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
                     <label for="checkbox-brand-2" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">Samsung</label>
                 </div>
                 <div class="mb-2 flex cursor-pointer items-center">
-                    <input id="checkbox-brand-3" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
+                    <input @onchange='(e) => FilterBrands(e, "Xiaomi")' id="checkbox-brand-3" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
                     <label for="checkbox-brand-3" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">Xiaomi</label>
                 </div>
                 <div class="mb-2 flex cursor-pointer items-center">
-                    <input id="checkbox-brand-4" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
+                    <input @onchange='(e) => FilterBrands(e, "Motorola")' id="checkbox-brand-4" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
                     <label for="checkbox-brand-4" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">Motorola</label>
                 </div>
                 <div class="mb-2 flex cursor-pointer items-center">
-                    <input id="checkbox-brand-5" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
+                    <input @onchange='(e) => FilterBrands(e, "Sony")' id="checkbox-brand-5" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
                     <label for="checkbox-brand-5" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">Sony</label>
                 </div>
                 <div class="mb-2 flex cursor-pointer items-center">
-                    <input id="checkbox-brand-6" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
-                    <label for="checkbox-brand-6" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">Phillips</label>
+                    <input @onchange='(e) => FilterBrands(e, "Philips")' id="checkbox-brand-6" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
+                    <label for="checkbox-brand-6" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">Philips</label>
                 </div>
             </div>
             <hr class="border-gray-300" />
@@ -73,12 +75,13 @@
         <div>
             <div class="mx-4 mb-2 mt-6 flex items-center bg-gray-200 p-3">
                 <ion-icon name="search" class="select-none text-2xl text-gray-700"></ion-icon>
-                <input type="text" placeholder="Search product" class="ml-3 w-full bg-transparent text-[15px] text-gray-700 outline-none">
+                <input @oninput="SearchProducts" type="text" placeholder="Search product" class="ml-3 w-full bg-transparent text-[15px] text-gray-700 outline-none" />
             </div>
         </div>
         <div class="flex flex-wrap">
-            @if (Products != null) {
-                foreach (Product product in Products)
+            @if (ProductsDisplayed != null)
+            {
+                foreach (Product product in ProductsDisplayed)
                 {
                     <ProductCard Id="@product.Id" Name="@product.Name" Price="@product.Price" Image="@product.Image" />
                 }
@@ -89,10 +92,41 @@
 </div>
 
 @code {
-    List<Product>? Products;
+    private List<Product>? Products;
+    private List<Product>? ProductsDisplayed;
 
     protected override async Task OnInitializedAsync()
     {
-        Products = await Services.GetData<Product>(ApiRequestURL.Products);
+        Products = await DataRequest.GetData<Product>(RequestURL.Products);
+        ProductsDisplayed = Products;
+    }
+
+
+    private void SearchProducts(ChangeEventArgs e)
+    {
+        ProductsDisplayed = Products.Where(x =>
+            x.Name.ToLower().Contains(e.Value.ToString().ToLower())).ToList();
+    }
+
+    private List<string>? brands = new();
+    //private string brand;
+    private void FilterBrands(ChangeEventArgs e, string brand)
+    {
+        if ((bool)e.Value)
+        {
+            brands.Add(brand);
+        }
+        else 
+        {
+            brands.Remove(brand);    
+        }
+
+        if (brands.Count != 0) 
+        {
+            ProductsDisplayed = Products.Where(x => brands.Contains(x.Brand)).ToList();
+            return;
+        }
+
+        ProductsDisplayed = Products;
     }
 }
