@@ -16,6 +16,13 @@ namespace techshop.Components
             return JsonConvert.DeserializeObject<List<T>>(responseData);
         }
 
+        public static async Task<T?> GetDataById<T>(string url, string id)
+        {
+            HttpResponseMessage response = await HttpClient.GetAsync($"{url}/{id}");
+            string responseData = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<T>(responseData);
+        }
+
         public static async Task PostData(string url, string data)
         {
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");

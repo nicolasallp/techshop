@@ -1,13 +1,13 @@
 ﻿<div class="m-4 bg-gray-50">
     <div class="h-fit w-[300px] border border-gray-300 hover:border-blue-600">
-        <a href="Product">
+        <a href="ProductInfo/@Id">
             <div>
-                <img class="m-auto size-[200px] object-contain" src="https://flowbite.com/docs/images/products/apple-watch.png" alt="product image" />
+                <img class="m-auto size-[200px] object-contain" src='@($"{ApiRequestURL.Resources}/{Image}")' alt="product image" />
             </div>
             <div class="mb-2 px-5">
-                <h5 class="mb-1 font-semibold tracking-tight text-[16px] text-gray-700">Apple Watch Series 7 GPS, Aluminium Case, Starlight Sport</h5>
+                <h5 class="mb-1 font-semibold tracking-tight text-[16px] text-gray-700">@Name</h5>
                 <div class="flex justify-between">
-                    <span class="text-lg font-bold text-gray-900">$599.99</span>
+                    <span class="text-lg font-bold text-gray-900">$@Price</span>
                     <Rating Average="4" Count="695" />
                 </div>
             </div>
@@ -17,3 +17,17 @@
         <button href="#" class="w-full bg-blue-700 py-3.5 text-center text-sm font-medium text-white hover:bg-blue-600 focus:outline-offset-2 focus:outline-black">Add to cart</button>
     </div>
 </div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    [Parameter]
+    public string? Name { get; set; }
+
+    [Parameter]
+    public decimal Price { get; set; }
+
+    [Parameter]
+    public string? Image { get; set; }
+}
