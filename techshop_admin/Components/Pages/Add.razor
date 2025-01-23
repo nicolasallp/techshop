@@ -42,15 +42,20 @@
                 <label for="price" class="mb-1 block text-sm font-medium text-gray-700">Price</label>
                 <div class="flex items-center">
                     <span class="mr-2">$</span>
-                    <InputText @bind-Value="Model.Price" type="text" id="price" class="block w-[100px] border border-gray-300 bg-gray-50 p-2.5 font-bold text-gray-800" />
+                    <InputText @bind-Value="Model.Price" type="text" id="price" class="block w-[150px] border border-gray-300 bg-gray-50 p-2.5 font-bold text-gray-800" />
                 </div>
                 <ValidationMessage For="() => Model.Price" class="text-sm text-red-700" />
             </div>
             <div class="mb-3">
-                <label for="brand" class="mb-1 block text-sm font-medium text-gray-700">Brand</label>
-                <InputText @bind-Value="Model.Brand" type="text" id="brand" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-gray-800" />
-                <ValidationMessage For="() => Model.Brand" class="text-sm text-red-700" />
+                <label for="name" class="mb-1 block text-sm font-medium text-gray-700">Availability</label>
+                <InputText @bind-Value="Model.Availability" type="text" id="name" class="block w-full border border-gray-300 bg-gray-50 p-2.5 font-bold text-gray-800" />
+                <ValidationMessage For="() => Model.Availability" class="text-sm text-red-700" />
             </div>
+        </div>
+        <div class="mb-3">
+            <label for="brand" class="mb-1 block text-sm font-medium text-gray-700">Brand</label>
+            <InputText @bind-Value="Model.Brand" type="text" id="brand" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-gray-800" />
+            <ValidationMessage For="() => Model.Brand" class="text-sm text-red-700" />
         </div>
         <span class="text-sm text-red-700">@errorMessage</span>
         <button type="submit" class="mt-4 w-full bg-gray-800 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700 active:bg-gray-900">Add product</button>
@@ -87,7 +92,7 @@
     private async Task AddProduct()
     {
         MemoryStream memoryStream = new MemoryStream();
-        await browserFile.OpenReadStream().CopyToAsync(memoryStream);
+        await browserFile.OpenReadStream(5*1024*1024).CopyToAsync(memoryStream);
         imageBytes = memoryStream.ToArray();
 
         Services.PostData("https://localhost:5280/api/Products", JsonConvert.SerializeObject(new Product
@@ -96,6 +101,7 @@
                 Description = Model.Description,
                 Price = Convert.ToDecimal(Model.Price),
                 Brand = Model.Brand,
+                Availability = Convert.ToInt32(Model.Availability),
                 Image = $"{Convert.ToBase64String(imageBytes)},{browserFile.Name},{browserFile.ContentType}"
             }));
         navigation.Refresh(true);
