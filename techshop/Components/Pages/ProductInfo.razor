@@ -4,7 +4,7 @@
     @if (Product != null) 
     {
         <div class="mt-12 flex h-fit w-full justify-center">
-            <img class="mr-6 size-[500px] border border-gray-200 bg-white object-scale-down p-6" src='@($"{ApiRequestURL.Resources}/{Product.Image}")' />
+            <img class="mr-6 size-[500px] border border-gray-200 bg-white object-scale-down p-6" src='@($"{RequestURL.Resources}/{Product.Image}")' />
             <div class="w-[500px]">
                 <h1 class="text-2xl font-bold">@Product.Name</h1>
                 <div class="my-2">
@@ -72,6 +72,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Product = await Services.GetDataById<Product>(ApiRequestURL.Products, Id);
+        Product = await DataRequest.GetDataById<Product>(RequestURL.Products, Id);
     }
 }

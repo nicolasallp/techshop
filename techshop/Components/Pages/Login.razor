@@ -43,7 +43,7 @@
 
     private async Task Authenticate()
     {
-        User user = (await Services.GetData<User>(ApiRequestURL.Users))
+        User user = (await DataRequest.GetData<User>(RequestURL.Users))
             .Where(x => x.Email == Model.Email).FirstOrDefault();
         if (user is null || !BCrypt.Verify(Model.Password, user.Password))
         {

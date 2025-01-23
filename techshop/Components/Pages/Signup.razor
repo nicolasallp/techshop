@@ -69,7 +69,7 @@
                 Email = Model.Email,
                 Password = BCrypt.HashPassword(Model.Password)
             });
-        await Services.PostData(ApiRequestURL.Users, data);
+        await DataRequest.PostData(RequestURL.Users, data);
         navigation.NavigateTo("/");
     }
 }
