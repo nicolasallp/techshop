@@ -110,18 +110,7 @@ namespace techshop_api.Controllers
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetProduct", new { id = product.Id }, product);
-        }
-
-        [HttpPost("upload")]
-        public async Task<IActionResult> UploadImage(IFormFile file)
-        {
-            string extension = Path.GetExtension(file.FileName);
-            string fileName = Guid.NewGuid().ToString() + extension;
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
-            using FileStream stream = new FileStream(Path.Combine(path, fileName), FileMode.Create);
-            await file.CopyToAsync(stream);
-            return Ok(new {FileName = fileName});
+            return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
         }
 
         // DELETE: api/Products/5
