@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using techshop_api.Data;
-using techshop_api.DTO;
+using techshop_api.Dtos;
 using techshop_api.Models;
 
 namespace techshop_api.Controllers
@@ -78,7 +78,7 @@ namespace techshop_api.Controllers
         // POST: api/Products
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Product>> PostProduct(ProductCreateDTO productDTO)
+        public async Task<ActionResult<Product>> PostProduct(ProductCreateDto productDTO)
         {
             string base64Data = productDTO.Image.Split(",")[0];
             string fileName = productDTO.Image.Split(",")[1];
