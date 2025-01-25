@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using System.Diagnostics
+@using System.Globalization
 @rendermode InteractiveServer
 
 <PageTitle>Home | TechShop</PageTitle>
@@ -10,19 +11,19 @@
             <div class="items-center p-2.5">
                 <h1 class="mb-2 text-lg font-bold text-gray-700">Price</h1>
                 <div class="mb-2 flex cursor-pointer items-center">
-                    <input @onchange='(e) => FilterPrices(e, [1, 99.99m, 500])' id="checkbox-price-1" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
+                    <input @onchange='(e) => FilterProducts<decimal[]>(e, [1, 99.99m])' id="checkbox-price-1" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
                     <label for="checkbox-price-1" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">R$1 - R$99</label>
                 </div>
                 <div class="mb-2 flex cursor-pointer items-center">
-                    <input @onchange='(e) => FilterPrices(e, [100, 299.99m, 500])' id="checkbox-price-2" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
+                    <input @onchange='(e) => FilterProducts<decimal[]>(e, [100, 299.99m])' id="checkbox-price-2" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
                     <label for="checkbox-price-2" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">R$100 - R$299</label>
                 </div>
                 <div class="mb-2 flex cursor-pointer items-center">
-                    <input @onchange='(e) => FilterPrices(e, [300, 499.99m, 500])' id="checkbox-price-3" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
+                    <input @onchange='(e) => FilterProducts<decimal[]>(e, [300, 499.99m])' id="checkbox-price-3" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
                     <label for="checkbox-price-3" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">R$300 - R$499</label>
                 </div>
                 <div class="mb-2 flex cursor-pointer items-center">
-                    <input @onchange='(e) => FilterPrices(e, [500, 500, 500])' id="checkbox-price-4" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
+                    <input id="checkbox-price-4" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
                     <label for="checkbox-price-4" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">R$500+</label>
                 </div>
                 <p class="mb-1 mt-3 text-sm text-gray-600">Custom range</p>
@@ -35,27 +36,27 @@
             <div class="items-center p-2.5">
                 <h1 class="mb-2 text-lg font-bold text-gray-700">Brands</h1>
                 <div class="mb-2 flex cursor-pointer items-center">
-                    <input @onchange='(e) => FilterBrands(e, "Apple")' id="checkbox-brand-1" type="checkbox" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600" />
+                    <input @onchange='(e) => FilterProducts(e, "Apple")' id="checkbox-brand-1" type="checkbox" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600" />
                     <label for="checkbox-brand-1" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">Apple</label>
                 </div>
                 <div class="mb-2 flex cursor-pointer items-center">
-                    <input @onchange='(e) => FilterBrands(e, "Samsung")' id="checkbox-brand-2" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
+                    <input @onchange='(e) => FilterProducts(e, "Samsung")' id="checkbox-brand-2" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
                     <label for="checkbox-brand-2" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">Samsung</label>
                 </div>
                 <div class="mb-2 flex cursor-pointer items-center">
-                    <input @onchange='(e) => FilterBrands(e, "Xiaomi")' id="checkbox-brand-3" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
+                    <input @onchange='(e) => FilterProducts(e, "Xiaomi")' id="checkbox-brand-3" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
                     <label for="checkbox-brand-3" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">Xiaomi</label>
                 </div>
                 <div class="mb-2 flex cursor-pointer items-center">
-                    <input @onchange='(e) => FilterBrands(e, "Motorola")' id="checkbox-brand-4" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
+                    <input @onchange='(e) => FilterProducts(e, "Motorola")' id="checkbox-brand-4" type="checkbox" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600" />
                     <label for="checkbox-brand-4" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">Motorola</label>
                 </div>
                 <div class="mb-2 flex cursor-pointer items-center">
-                    <input @onchange='(e) => FilterBrands(e, "Sony")' id="checkbox-brand-5" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
+                    <input @onchange='(e) => FilterProducts(e, "Sony")' id="checkbox-brand-5" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
                     <label for="checkbox-brand-5" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">Sony</label>
                 </div>
                 <div class="mb-2 flex cursor-pointer items-center">
-                    <input @onchange='(e) => FilterBrands(e, "Philips")' id="checkbox-brand-6" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
+                    <input @onchange='(e) => FilterProducts(e, "Philips")' id="checkbox-brand-6" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
                     <label for="checkbox-brand-6" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">Philips</label>
                 </div>
             </div>
@@ -79,9 +80,9 @@
             </div>
         </div>
         <div class="flex flex-wrap">
-            @if (ProductsDisplayed != null)
+            @if (DisplayedProducts != null)
             {
-                foreach (Product product in ProductsDisplayed)
+                foreach (Product product in DisplayedProducts)
                 {
                     <ProductCard Id="@product.Id" Name="@product.Name" Price="@product.Price" Image="@product.Image" />
                 }
@@ -93,98 +94,99 @@
 
 @code {
     private List<Product>? Products;
-    private List<Product>? ProductsFiltered;
-    private List<Product>? ProductsDisplayed;
+    private List<Product>? DisplayedProducts;
+
+    private Dictionary<string, bool> PricesDic = new()
+    {
+        {"1.00,99.99", false},
+        {"100.00,299.99", false},
+        { "300.00,499.99", false}
+    };
+
+    private Dictionary<string, bool> BrandsDic = new()
+    {
+        {"Apple", false},
+        {"Samsung", false},
+        {"Xiaomi", false},
+        {"Motorola", false},
+        {"Sony", false},
+        {"Philips", false}
+    };
 
     protected override async Task OnInitializedAsync()
     {
         Products = await DataRequest.GetData<Product>(RequestURL.Products);
-        ProductsDisplayed = Products;
+        DisplayedProducts = Products;
     }
 
     private void SearchProducts(ChangeEventArgs e)
     {
-        ProductsDisplayed = ProductsFiltered.Where(x =>
+        DisplayedProducts = FilteredProducts.Where(x =>
             x.Name.ToLower().Contains(e.Value.ToString().ToLower())).ToList();
     }
 
-    private List<Product>? BrandsFilteredProducts;
-    private List<string>? brands = new();
-    private bool isBrandsFiltered;
+    private List<Product>? FilteredProducts;
+    private List<string>? CheckedPrices = new();
+    private List<string>? CheckedBrands = new();
 
-    private void FilterBrands(ChangeEventArgs e, string brand)
+    private void FilterProducts<TKey>(ChangeEventArgs e, TKey productKey)
     {
-        ProductsFiltered = isPricesFiltered ? PricesFilteredProducts : Products;
-
-        if ((bool)e.Value)
+        if (productKey is decimal[] priceKey)
         {
-            brands.Add(brand);
+            PricesDic[string.Join(",", priceKey.Select(p => p.ToString("0.00", CultureInfo.InvariantCulture)))] = (bool)e.Value;
         }
-        else
+        else if (productKey is string brandKey)
         {
-            brands.Remove(brand);
+            BrandsDic[brandKey] = (bool)e.Value;
         }
 
-        if (brands.Count > 0)
+        FilteredProducts = Products;
+
+        foreach(KeyValuePair<string, bool> prices in PricesDic)
         {
-            isBrandsFiltered = true;
-            ProductsDisplayed = ProductsFiltered.Where(x => brands.Contains(x.Brand)).ToList();
-            BrandsFilteredProducts = Products.Where(x => brands.Contains(x.Brand)).ToList();
-            return;
-        }
-
-        isBrandsFiltered = false;
-        ProductsDisplayed = isPricesFiltered ? PricesFilteredProducts : Products;
-    }
-
-    private List<Product>? PricesFilteredProducts;
-    private List<decimal[]>? pricesList = new();
-    private bool isPricesFiltered;
-
-
-    private void FilterPrices(ChangeEventArgs e, decimal[] prices)
-    {
-        ProductsFiltered = isBrandsFiltered ? BrandsFilteredProducts : Products;
-
-        if ((bool)e.Value)
-        {
-            pricesList.Add(prices);
-        }
-        else
-        {
-            pricesList.Remove(pricesList.FirstOrDefault(p => p.SequenceEqual(prices)));
-        }
-
-        if (pricesList.Count > 0)
-        {
-            isPricesFiltered = true;
-            ProductsDisplayed = ProductsFiltered.Where((x) =>
+            if (prices.Value)
             {
-                foreach (decimal[] values in pricesList)
+                CheckedPrices.Add(prices.Key);
+            }
+        }
+
+        foreach (KeyValuePair<string, bool> brands in BrandsDic)
+        {
+            if (brands.Value)
+            {
+                CheckedBrands.Add(brands.Key);
+            }
+        }
+        
+        if (CheckedPrices.Count > 0)
+        {
+            FilteredProducts = FilteredProducts.Where((x) =>
+            {
+                foreach (string values in CheckedPrices)
                 {
-                    if (x.Price >= values[0] && x.Price <= values[1])
+                    decimal[] prices = values.Split(",").Select((p => Convert.ToDecimal(p, CultureInfo.InvariantCulture))).ToArray();
+                    if (x.Price >= prices[0] && x.Price <= prices[1])
                     {
                         return true;
                     }
                 }
                 return false;
             }).ToList();
+        }
 
-            PricesFilteredProducts = Products.Where((x) =>
-            {
-                foreach (decimal[] values in pricesList)
-                {
-                    if (x.Price >= values[0] && x.Price <= values[1])
-                    {
-                        return true;
-                    }
-                }
-                return false;
-            }).ToList();
+        if (CheckedBrands.Count > 0)
+        {
+            FilteredProducts = FilteredProducts.Where(x => CheckedBrands.Contains(x.Brand)).ToList();
+        }
+
+        if (CheckedPrices.Count == 0 && CheckedBrands.Count == 0)
+        {
+            DisplayedProducts = Products;
             return;
         }
 
-        isPricesFiltered = false;
-        ProductsDisplayed = isBrandsFiltered ? BrandsFilteredProducts : Products;
+        CheckedPrices.Clear();
+        CheckedBrands.Clear();
+        DisplayedProducts = FilteredProducts;
     }
 }
