@@ -23,7 +23,7 @@
                     <label for="checkbox-price-3" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">R$300 - R$499</label>
                 </div>
                 <div class="mb-2 flex cursor-pointer items-center">
-                    <input id="checkbox-price-4" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
+                    <input @onchange='(e) => FilterProducts<decimal[]>(e, [500])' id="checkbox-price-4" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
                     <label for="checkbox-price-4" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">R$500+</label>
                 </div>
                 <p class="mb-1 mt-3 text-sm text-gray-600">Custom range</p>
@@ -76,7 +76,7 @@
         <div>
             <div class="mx-4 mb-2 mt-6 flex items-center bg-gray-200 p-3">
                 <ion-icon name="search" class="select-none text-2xl text-gray-700"></ion-icon>
-                <input @oninput="SearchProducts" type="text" placeholder="Search product" class="ml-3 w-full bg-transparent text-[15px] text-gray-700 outline-none" />
+                <input @oninput="(e) => { inputText = (string)e.Value; FilterProducts<string>(); }" type="text" placeholder="Search product" class="ml-3 w-full bg-transparent text-[15px] text-gray-700 outline-none" />
             </div>
         </div>
         <div class="flex flex-wrap">
@@ -96,41 +96,23 @@
     private List<Product>? Products;
     private List<Product>? DisplayedProducts;
 
-    private Dictionary<string, bool> PricesDic = new()
-    {
-        {"1.00,99.99", false},
-        {"100.00,299.99", false},
-        { "300.00,499.99", false}
-    };
-
-    private Dictionary<string, bool> BrandsDic = new()
-    {
-        {"Apple", false},
-        {"Samsung", false},
-        {"Xiaomi", false},
-        {"Motorola", false},
-        {"Sony", false},
-        {"Philips", false}
-    };
-
     protected override async Task OnInitializedAsync()
     {
         Products = await DataRequest.GetData<Product>(RequestURL.Products);
         DisplayedProducts = Products;
     }
 
-    private void SearchProducts(ChangeEventArgs e)
-    {
-        DisplayedProducts = FilteredProducts.Where(x =>
-            x.Name.ToLower().Contains(e.Value.ToString().ToLower())).ToList();
-    }
-
     private List<Product>? FilteredProducts;
-    private List<string>? CheckedPrices = new();
-    private List<string>? CheckedBrands = new();
+    private Dictionary<string, bool> PricesDic = new();
+    private Dictionary<string, bool> BrandsDic = new();
+    private string inputText = "";
 
-    private void FilterProducts<TKey>(ChangeEventArgs e, TKey productKey)
+    private void FilterProducts<TKey>(ChangeEventArgs e = default, TKey productKey = default)
     {
+        FilteredProducts = Products;
+        List<string>? CheckedPrices = new();
+        List<string>? CheckedBrands = new();
+
         if (productKey is decimal[] priceKey)
         {
             PricesDic[string.Join(",", priceKey.Select(p => p.ToString("0.00", CultureInfo.InvariantCulture)))] = (bool)e.Value;
@@ -140,24 +122,14 @@
             BrandsDic[brandKey] = (bool)e.Value;
         }
 
-        FilteredProducts = Products;
+        CheckedPrices.AddRange(PricesDic.Where(e => e.Value).ToDictionary().Keys);
+        CheckedBrands.AddRange(BrandsDic.Where(e => e.Value).ToDictionary().Keys);
 
-        foreach(KeyValuePair<string, bool> prices in PricesDic)
+        if (inputText.Length > 0)
         {
-            if (prices.Value)
-            {
-                CheckedPrices.Add(prices.Key);
-            }
+            FilteredProducts = FilteredProducts.Where(x => x.Name.ToLower().Contains(inputText.ToLower())).ToList();
         }
 
-        foreach (KeyValuePair<string, bool> brands in BrandsDic)
-        {
-            if (brands.Value)
-            {
-                CheckedBrands.Add(brands.Key);
-            }
-        }
-        
         if (CheckedPrices.Count > 0)
         {
             FilteredProducts = FilteredProducts.Where((x) =>
@@ -165,7 +137,15 @@
                 foreach (string values in CheckedPrices)
                 {
                     decimal[] prices = values.Split(",").Select((p => Convert.ToDecimal(p, CultureInfo.InvariantCulture))).ToArray();
-                    if (x.Price >= prices[0] && x.Price <= prices[1])
+
+                    if (prices.Length > 1)
+                    {
+                        if (x.Price >= prices[0] && x.Price <= prices[1])
+                        {
+                            return true;
+                        }
+                    }
+                    else if (x.Price >= prices[0])
                     {
                         return true;
                     }
@@ -179,14 +159,6 @@
             FilteredProducts = FilteredProducts.Where(x => CheckedBrands.Contains(x.Brand)).ToList();
         }
 
-        if (CheckedPrices.Count == 0 && CheckedBrands.Count == 0)
-        {
-            DisplayedProducts = Products;
-            return;
-        }
-
-        CheckedPrices.Clear();
-        CheckedBrands.Clear();
         DisplayedProducts = FilteredProducts;
     }
 }
