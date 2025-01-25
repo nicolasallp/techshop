@@ -10,20 +10,20 @@
             <div class="items-center p-2.5">
                 <h1 class="mb-2 text-lg font-bold text-gray-700">Price</h1>
                 <div class="mb-2 flex cursor-pointer items-center">
-                    <input id="checkbox-price-1" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
-                    <label for="checkbox-price-1" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">R$1 - R$199</label>
+                    <input @onchange='(e) => FilterPrices(e, [1, 99.99m, 500])' id="checkbox-price-1" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
+                    <label for="checkbox-price-1" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">R$1 - R$99</label>
                 </div>
                 <div class="mb-2 flex cursor-pointer items-center">
-                    <input id="checkbox-price-2" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
-                    <label for="checkbox-price-2" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">R$200 - R$399</label>
+                    <input @onchange='(e) => FilterPrices(e, [100, 299.99m, 500])' id="checkbox-price-2" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
+                    <label for="checkbox-price-2" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">R$100 - R$299</label>
                 </div>
                 <div class="mb-2 flex cursor-pointer items-center">
-                    <input id="checkbox-price-3" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
-                    <label for="checkbox-price-3" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">R$400 - R$699</label>
+                    <input @onchange='(e) => FilterPrices(e, [300, 499.99m, 500])' id="checkbox-price-3" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
+                    <label for="checkbox-price-3" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">R$300 - R$499</label>
                 </div>
                 <div class="mb-2 flex cursor-pointer items-center">
-                    <input id="checkbox-price-4" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
-                    <label for="checkbox-price-4" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">R$700+</label>
+                    <input @onchange='(e) => FilterPrices(e, [500, 500, 500])' id="checkbox-price-4" type="checkbox" value="" class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600">
+                    <label for="checkbox-price-4" class="ms-2 cursor-pointer text-sm font-medium text-gray-500">R$500+</label>
                 </div>
                 <p class="mb-1 mt-3 text-sm text-gray-600">Custom range</p>
                 <div class="flex items-center gap-2">
@@ -93,6 +93,7 @@
 
 @code {
     private List<Product>? Products;
+    private List<Product>? ProductsFiltered;
     private List<Product>? ProductsDisplayed;
 
     protected override async Task OnInitializedAsync()
@@ -101,32 +102,89 @@
         ProductsDisplayed = Products;
     }
 
-
     private void SearchProducts(ChangeEventArgs e)
     {
-        ProductsDisplayed = Products.Where(x =>
+        ProductsDisplayed = ProductsFiltered.Where(x =>
             x.Name.ToLower().Contains(e.Value.ToString().ToLower())).ToList();
     }
 
+    private List<Product>? BrandsFilteredProducts;
     private List<string>? brands = new();
-    //private string brand;
+    private bool isBrandsFiltered;
+
     private void FilterBrands(ChangeEventArgs e, string brand)
     {
+        ProductsFiltered = isPricesFiltered ? PricesFilteredProducts : Products;
+
         if ((bool)e.Value)
         {
             brands.Add(brand);
         }
-        else 
+        else
         {
-            brands.Remove(brand);    
+            brands.Remove(brand);
         }
 
-        if (brands.Count != 0) 
+        if (brands.Count > 0)
         {
-            ProductsDisplayed = Products.Where(x => brands.Contains(x.Brand)).ToList();
+            isBrandsFiltered = true;
+            ProductsDisplayed = ProductsFiltered.Where(x => brands.Contains(x.Brand)).ToList();
+            BrandsFilteredProducts = Products.Where(x => brands.Contains(x.Brand)).ToList();
             return;
         }
 
-        ProductsDisplayed = Products;
+        isBrandsFiltered = false;
+        ProductsDisplayed = isPricesFiltered ? PricesFilteredProducts : Products;
+    }
+
+    private List<Product>? PricesFilteredProducts;
+    private List<decimal[]>? pricesList = new();
+    private bool isPricesFiltered;
+
+
+    private void FilterPrices(ChangeEventArgs e, decimal[] prices)
+    {
+        ProductsFiltered = isBrandsFiltered ? BrandsFilteredProducts : Products;
+
+        if ((bool)e.Value)
+        {
+            pricesList.Add(prices);
+        }
+        else
+        {
+            pricesList.Remove(pricesList.FirstOrDefault(p => p.SequenceEqual(prices)));
+        }
+
+        if (pricesList.Count > 0)
+        {
+            isPricesFiltered = true;
+            ProductsDisplayed = ProductsFiltered.Where((x) =>
+            {
+                foreach (decimal[] values in pricesList)
+                {
+                    if (x.Price >= values[0] && x.Price <= values[1])
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }).ToList();
+
+            PricesFilteredProducts = Products.Where((x) =>
+            {
+                foreach (decimal[] values in pricesList)
+                {
+                    if (x.Price >= values[0] && x.Price <= values[1])
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }).ToList();
+            return;
+        }
+
+        isPricesFiltered = false;
+        ProductsDisplayed = isBrandsFiltered ? BrandsFilteredProducts : Products;
     }
 }
