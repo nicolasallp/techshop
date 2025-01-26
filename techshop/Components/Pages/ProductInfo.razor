@@ -1,4 +1,8 @@
 ﻿@page "/ProductInfo/{Id}"
+@inject IJSRuntime JSRuntime
+@rendermode InteractiveServer
+
+<PageTitle>@Product.Name | Techshop</PageTitle>
 
 <div class="w-[1250px] bg-gray-100">
     @if (Product != null) 
@@ -73,5 +77,13 @@
     protected override async Task OnInitializedAsync()
     {
         Product = await DataRequest.GetDataById<Product>(RequestURL.Products, Id);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("eval", "window.scrollTo(0, 0);");
+        }
     }
 }
