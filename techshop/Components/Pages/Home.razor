@@ -1,6 +1,4 @@
 ﻿@page "/"
-@using System.Diagnostics
-@using System.Globalization
 @rendermode InteractiveServer
 
 <PageTitle>Home | TechShop</PageTitle>
@@ -76,13 +74,13 @@
         <div>
             <div class="mx-4 mb-2 mt-6 flex items-center bg-gray-200 p-3">
                 <ion-icon name="search" class="select-none text-2xl text-gray-700"></ion-icon>
-                <input @oninput="(e) => { inputText = (string)e.Value; FilterProducts<string>(); }" type="text" placeholder="Search product" class="ml-3 w-full bg-transparent text-[15px] text-gray-700 outline-none" />
+                <input @oninput="(e) => { searchText = (string)e.Value; FilterProducts<string>(); }" type="text" placeholder="Search product" class="ml-3 w-full bg-transparent text-[15px] text-gray-700 outline-none" />
             </div>
         </div>
         <div class="flex flex-wrap">
-            @if (DisplayedProducts != null)
+            @if (FilteredProducts != null)
             {
-                foreach (Product product in DisplayedProducts)
+                foreach (Product product in FilteredProducts)
                 {
                     <ProductCard Id="@product.Id" Name="@product.Name" Price="@product.Price" Image="@product.Image" />
                 }
@@ -94,45 +92,42 @@
 
 @code {
     private List<Product>? Products;
-    private List<Product>? DisplayedProducts;
 
     protected override async Task OnInitializedAsync()
     {
         Products = await DataRequest.GetData<Product>(RequestURL.Products);
-        DisplayedProducts = Products;
+        FilteredProducts = Products;
     }
 
     private List<Product>? FilteredProducts;
-    private Dictionary<string, bool> PricesDic = new();
-    private Dictionary<string, bool> BrandsDic = new();
-    private string inputText = "";
+    private Dictionary<string, bool> PricesDict = new();
+    private Dictionary<string, bool> BrandsDict = new();
+    private string searchText = "";
 
-    private void FilterProducts<TKey>(ChangeEventArgs e = default, TKey productKey = default)
+    private void FilterProducts<TKey>(ChangeEventArgs e = default, TKey filterKey = default)
     {
         FilteredProducts = Products;
-        List<string>? CheckedPrices = new();
-        List<string>? CheckedBrands = new();
 
-        if (productKey is decimal[] priceKey)
+        if (filterKey is decimal[] priceKey)
         {
-            PricesDic[string.Join(",", priceKey.Select(p => p.ToString("0.00", CultureInfo.InvariantCulture)))] = (bool)e.Value;
+            PricesDict[string.Join(",", priceKey.Select(p => p.ToString("0.00", CultureInfo.InvariantCulture)))] = (bool)e.Value;
         }
-        else if (productKey is string brandKey)
+        else if (filterKey is string brandKey)
         {
-            BrandsDic[brandKey] = (bool)e.Value;
+            BrandsDict[brandKey] = (bool)e.Value;
         }
 
-        CheckedPrices.AddRange(PricesDic.Where(e => e.Value).ToDictionary().Keys);
-        CheckedBrands.AddRange(BrandsDic.Where(e => e.Value).ToDictionary().Keys);
+        List<string> CheckedPrices = new(PricesDict.Where(p => p.Value).ToDictionary().Keys);
+        List<string> CheckedBrands = new(BrandsDict.Where(b => b.Value).ToDictionary().Keys);
 
-        if (inputText.Length > 0)
+        if (searchText.Length > 0)
         {
-            FilteredProducts = FilteredProducts.Where(x => x.Name.ToLower().Contains(inputText.ToLower())).ToList();
+            FilteredProducts = FilteredProducts.Where(p => p.Name.ToLower().Contains(searchText.ToLower())).ToList();
         }
 
         if (CheckedPrices.Count > 0)
         {
-            FilteredProducts = FilteredProducts.Where((x) =>
+            FilteredProducts = FilteredProducts.Where((p) =>
             {
                 foreach (string values in CheckedPrices)
                 {
@@ -140,12 +135,12 @@
 
                     if (prices.Length > 1)
                     {
-                        if (x.Price >= prices[0] && x.Price <= prices[1])
+                        if (p.Price >= prices[0] && p.Price <= prices[1])
                         {
                             return true;
                         }
                     }
-                    else if (x.Price >= prices[0])
+                    else if (p.Price >= prices[0])
                     {
                         return true;
                     }
@@ -156,9 +151,7 @@
 
         if (CheckedBrands.Count > 0)
         {
-            FilteredProducts = FilteredProducts.Where(x => CheckedBrands.Contains(x.Brand)).ToList();
+            FilteredProducts = FilteredProducts.Where(p => CheckedBrands.Contains(p.Brand)).ToList();
         }
-
-        DisplayedProducts = FilteredProducts;
     }
 }
