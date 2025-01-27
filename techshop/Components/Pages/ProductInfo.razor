@@ -76,7 +76,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Product = await DataRequest.GetDataById<Product>(RequestURL.Products, Id);
+        Product = await ApiRequest.GetDataById<Product>(RequestURL.Products, Id);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

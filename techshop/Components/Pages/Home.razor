@@ -82,7 +82,7 @@
             {
                 foreach (Product product in FilteredProducts)
                 {
-                    <ProductCard Id="@product.Id" Name="@product.Name" Price="@product.Price" Image="@product.Image" />
+                    <ProductCard Product="product" />
                 }
             }
 
@@ -95,7 +95,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Products = await DataRequest.GetData<Product>(RequestURL.Products);
+        Products = await ApiRequest.GetData<Product>(RequestURL.Products);
         FilteredProducts = Products;
     }
 

@@ -43,7 +43,7 @@
 
     private async Task Authenticate()
     {
-        User user = (await DataRequest.GetData<User>(RequestURL.Users))
+        User user = (await ApiRequest.GetData<User>(RequestURL.Users))
             .Where(x => x.Email == Model.Email).FirstOrDefault();
         if (user is null || !BCrypt.Verify(Model.Password, user.Password))
         {
@@ -51,8 +51,12 @@
             return;
         }
 
-        Claim claim = new(ClaimTypes.Email, user.Email);
-        ClaimsIdentity identity = new(new[] { claim }, CookieAuthenticationDefaults.AuthenticationScheme);
+        List<Claim> claims = new()
+        {
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim("UserId", user.Id.ToString())
+        };
+        ClaimsIdentity identity =  new(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         ClaimsPrincipal principal = new(identity);
 
         await HttpContext.SignInAsync(principal);
