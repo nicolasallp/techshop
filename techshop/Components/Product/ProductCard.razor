@@ -1,35 +1,50 @@
 ﻿@inject NavigationManager navigation
+@inject IHttpContextAccessor accessor
 
 <div class="m-4 bg-gray-50">
     <div class="h-fit w-[300px] border border-gray-300 hover:border-blue-600">
-        <a href="ProductInfo/@Id">
+        <a href="ProductInfo/@Product.Id">
             <div>
-                <img class="m-auto size-[200px] object-contain" src='@($"{RequestURL.Resources}/{Image}")' alt="product image" />
+                <img class="m-auto size-[200px] object-contain" src='@($"{RequestURL.Resources}/{Product.Image}")' alt="product image" />
             </div>
             <div class="mb-2 px-5">
-                <h5 class="mb-1 font-semibold tracking-tight text-[16px] text-gray-700">@Name</h5>
+                <h5 class="mb-1 font-semibold tracking-tight text-[16px] text-gray-700">@Product.Name</h5>
                 <div class="flex justify-between">
-                    <span class="text-lg font-bold text-gray-900">$@Price</span>
+                    <span class="text-lg font-bold text-gray-900">$@Product.Price</span>
                     <Rating Average="4" Count="695" />
                 </div>
             </div>
         </a>
     </div>
     <div class="flex">
-        <button href="#" class="w-full bg-blue-700 py-3.5 text-center text-sm font-medium text-white hover:bg-blue-600 focus:outline-offset-2 focus:outline-black">Add to cart</button>
+        <AuthorizeView>
+            <Authorized>
+                <button @onclick="AddToCart" class="w-full @(isClicked ? "bg-gray-200 text-blue-700 hover:bg-gray-300" : "bg-blue-700 text-white hover:bg-blue-600") py-3.5 text-center text-sm font-medium text-white focus:outline-offset-2 focus:outline-black">@(isClicked ? "Added to cart" : "Add to cart")</button>
+            </Authorized>
+            <NotAuthorized>
+                <button @onclick='() => navigation.NavigateTo("Login")' class="w-full bg-blue-700 py-3.5 text-center text-sm font-medium text-white text-white hover:bg-blue-600 focus:outline-offset-2 focus:outline-black">Add to cart</button>
+            </NotAuthorized>
+        </AuthorizeView>
+
     </div>
 </div>
 
 @code {
     [Parameter]
-    public int Id { get; set; }
+    public Product Product { get; set; }
 
-    [Parameter]
-    public string? Name { get; set; }
+    private bool isClicked = false;
 
-    [Parameter]
-    public decimal Price { get; set; }
+    private async void AddToCart()
+    {
+        isClicked = true;
+        string data = JsonConvert.SerializeObject(new Cart
+        {
+            UserId = Convert.ToInt32(accessor.HttpContext.User.FindFirstValue("UserId")),
+            ProductId = Product.Id,
+            Quantity = 1
+        });
 
-    [Parameter]
-    public string? Image { get; set; }
+        await ApiRequest.PostData(RequestURL.Carts, data);
+    }
 }

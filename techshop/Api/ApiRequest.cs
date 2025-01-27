@@ -3,9 +3,9 @@ using System.Reflection;
 using System.Text;
 using techshop.Models.Entities;
 
-namespace techshop.Components
+namespace techshop.Api
 {
-    public class DataRequest
+    public class ApiRequest
     {
         static HttpClient HttpClient = new();
 
