@@ -10,7 +10,14 @@
 <div class="flex w-[1250px] flex-col items-center bg-white">
     <h1 class="mt-8 text-xl font-semibold text-blue-950">My cart</h1>
     <div class="h-full">
-        <ProductCart />
+        @if (Carts != null)
+        {
+            foreach (Cart cart in Carts)
+            {
+                <ProductCart Cart="cart" />
+
+            }
+        }
         <div class="flex items-center justify-between">
             <div class="w-[300px] text-sm">
                 <div class="flex justify-between text-gray-700">
@@ -34,3 +41,12 @@
     </div>
 </div>
 <ModalCart isVisible="showModal" onClose="() => showModal = false" />
+
+@code {
+    private List<Cart>? Carts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Carts = await ApiRequest.GetData<Cart>(RequestURL.Carts);
+    }
+}
