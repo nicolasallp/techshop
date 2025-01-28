@@ -1,5 +1,7 @@
 ﻿@page "/Cart"
 @rendermode InteractiveServer
+@inject IHttpContextAccessor accessor
+@inject NavigationManager navigation
 
 @code {
     bool showModal;
@@ -47,6 +49,11 @@
 
     protected override async Task OnInitializedAsync()
     {
+        if (!accessor.HttpContext!.User.Identity!.IsAuthenticated)
+        {
+            navigation.NavigateTo("/Login", true);
+            return;
+        }
         Carts = await ApiRequest.GetData<Cart>(RequestURL.Carts);
     }
 }
