@@ -1,9 +1,8 @@
 ﻿@inject NavigationManager navigation
-@inject IHttpContextAccessor accessor
 
 <div class="m-4 bg-gray-50">
     <div class="h-fit w-[300px] border border-gray-300 hover:border-blue-600">
-        <a href="ProductInfo/@Product.Id">
+        <a href="ProductInfo/@Product!.Id">
             <div>
                 <img class="m-auto size-[200px] object-contain" src='@($"{RequestURL.Resources}/{Product.Image}")' alt="product image" />
             </div>
@@ -19,10 +18,10 @@
     <div class="flex">
         <AuthorizeView>
             <Authorized>
-                <button @onclick="AddToCart" class="w-full @(isClicked ? "bg-gray-200 text-blue-700 hover:bg-gray-300" : "bg-blue-700 text-white hover:bg-blue-600") py-3.5 text-center text-sm font-medium text-white focus:outline-offset-2 focus:outline-black">@(isClicked ? "Added to cart" : "Add to cart")</button>
+                <button @onclick="AddToCart" class="w-full @(IsInCart ? "bg-gray-200 text-blue-700 hover:bg-gray-300" : "bg-blue-700 text-white hover:bg-blue-600") py-3.5 text-center text-sm font-medium focus:outline-offset-2 focus:outline-black">@(IsInCart ? "Added to cart" : "Add to cart")</button>
             </Authorized>
             <NotAuthorized>
-                <button @onclick='() => navigation.NavigateTo("Login")' class="w-full bg-blue-700 py-3.5 text-center text-sm font-medium text-white text-white hover:bg-blue-600 focus:outline-offset-2 focus:outline-black">Add to cart</button>
+                <button @onclick='() => navigation.NavigateTo("Login")' class="w-full bg-blue-700 py-3.5 text-center text-sm font-medium text-white hover:bg-blue-600 focus:outline-offset-2 focus:outline-black">Add to cart</button>
             </NotAuthorized>
         </AuthorizeView>
 
@@ -31,20 +30,38 @@
 
 @code {
     [Parameter]
-    public Product Product { get; set; }
+    public Product? Product { get; set; }
 
-    private bool isClicked = false;
+    [Parameter]
+    public int AuthenticatedUserId { get; set; }
+
+    [Parameter]
+    public Cart? CartProduct { get; set; }
+
+    [Parameter]
+    public bool IsInCart { get; set; }
 
     private async void AddToCart()
     {
-        isClicked = true;
-        string data = JsonConvert.SerializeObject(new Cart
+        if (IsInCart && CartProduct != null)
         {
-            UserId = Convert.ToInt32(accessor.HttpContext.User.FindFirstValue("UserId")),
-            ProductId = Product.Id,
-            Quantity = 1
-        });
+            IsInCart = false;
+            await ApiRequest.DeleteData(RequestURL.Carts, CartProduct!.Id);
+            return;
+        }
+
+        IsInCart = true;
+        string data = JsonConvert.SerializeObject(new Cart
+            {
+                UserId = AuthenticatedUserId,
+                ProductId = Product!.Id,
+                Quantity = 1
+            });
 
         await ApiRequest.PostData(RequestURL.Carts, data);
+        List<Cart>? CartProducts = await ApiRequest.GetData<Cart>(RequestURL.Carts);
+        CartProducts = CartProducts!.Where(c => c.User?.Id == AuthenticatedUserId).ToList();
+        CartProduct = CartProducts!.Where(p => p.ProductId == Product!.Id).FirstOrDefault();
+        return;
     }
 }

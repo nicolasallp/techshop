@@ -1,4 +1,4 @@
-﻿namespace techshop.Api
+﻿namespace techshop.DataManager
 {
     public static class RequestURL
     {

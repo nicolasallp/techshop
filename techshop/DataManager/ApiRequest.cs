@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Text;
 using techshop.Models.Entities;
 
-namespace techshop.Api
+namespace techshop.DataManager
 {
     public class ApiRequest
     {
@@ -16,7 +16,7 @@ namespace techshop.Api
             return JsonConvert.DeserializeObject<List<T>>(responseData);
         }
 
-        public static async Task<T?> GetDataById<T>(string url, string id)
+        public static async Task<T?> GetDataById<T>(string url, int id)
         {
             HttpResponseMessage response = await HttpClient.GetAsync($"{url}/{id}");
             string responseData = await response.Content.ReadAsStringAsync();
@@ -27,6 +27,11 @@ namespace techshop.Api
         {
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
             await HttpClient.PostAsync(url, content);
+        }
+
+        public static async Task DeleteData(string url, int id)
+        {
+            await HttpClient.DeleteAsync($"{url}/{id}");
         }
     }
 }
