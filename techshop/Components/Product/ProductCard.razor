@@ -1,4 +1,6 @@
-﻿@inject NavigationManager navigation
+﻿@using techshop.Components.Layout
+@inject NavigationManager NavigationManager
+@inject CartDI CartCounter
 
 <div class="m-4 bg-gray-50">
     <div class="h-fit w-[300px] border border-gray-300 hover:border-blue-600">
@@ -21,7 +23,7 @@
                 <button @onclick="AddToCart" class="w-full @(IsInCart ? "bg-gray-200 text-blue-700 hover:bg-gray-300" : "bg-blue-700 text-white hover:bg-blue-600") py-3.5 text-center text-sm font-medium focus:outline-offset-2 focus:outline-black">@(IsInCart ? "Added to cart" : "Add to cart")</button>
             </Authorized>
             <NotAuthorized>
-                <button @onclick='() => navigation.NavigateTo("Login")' class="w-full bg-blue-700 py-3.5 text-center text-sm font-medium text-white hover:bg-blue-600 focus:outline-offset-2 focus:outline-black">Add to cart</button>
+                <button @onclick='() => NavigationManager.NavigateTo("Login")' class="w-full bg-blue-700 py-3.5 text-center text-sm font-medium text-white hover:bg-blue-600 focus:outline-offset-2 focus:outline-black">Add to cart</button>
             </NotAuthorized>
         </AuthorizeView>
 
@@ -41,12 +43,17 @@
     [Parameter]
     public bool IsInCart { get; set; }
 
+    List<Cart>? CartProducts;
+
     private async void AddToCart()
     {
+
         if (IsInCart && CartProduct != null)
         {
             IsInCart = false;
             await ApiRequest.DeleteData(RequestURL.Carts, CartProduct!.Id);
+            CartProducts = await ApiRequest.GetData<Cart>(RequestURL.Carts, AuthenticatedUserId);
+            CartCounter.SendCount(CartProducts?.Count ?? 0);
             return;
         }
 
@@ -58,9 +65,10 @@
                 Quantity = 1
             });
 
+
         await ApiRequest.PostData(RequestURL.Carts, data);
-        List<Cart>? CartProducts = await ApiRequest.GetData<Cart>(RequestURL.Carts);
-        CartProducts = CartProducts!.Where(c => c.User?.Id == AuthenticatedUserId).ToList();
+        CartProducts = await ApiRequest.GetData<Cart>(RequestURL.Carts, AuthenticatedUserId);
+        CartCounter.SendCount(CartProducts?.Count ?? 0);
         CartProduct = CartProducts!.Where(p => p.ProductId == Product!.Id).FirstOrDefault();
         return;
     }
