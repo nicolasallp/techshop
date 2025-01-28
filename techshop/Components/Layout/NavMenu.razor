@@ -1,4 +1,8 @@
-﻿<header class="bg-gray-800 text-white">
+﻿@inject IHttpContextAccessor accessor
+@inject CartDI CartCounter
+@rendermode InteractiveServer
+
+<header class="bg-gray-800 text-white">
     <nav class="mx-auto flex w-[95%] items-center justify-between">
         <div>
             <NavLink href="/" class="cursor-pointer select-none pb-4 pt-4 font-bold text-[20px]">TechShop</NavLink>
@@ -10,7 +14,8 @@
                         <NavLink class="hover:underline" href="/">PRODUCTS</NavLink>
                     </li>
                     <li>
-                        <NavLink class="hover:underline" href="Cart">CART (0)</NavLink>
+                        <NavLink class="hover:underline"
+                        href='@($"Cart/{AuthenticatedUserId}")'>CART (@CartsCount)</NavLink>
                     </li>
                 </ul>
             </div>
@@ -23,8 +28,22 @@
                         <a href="Login" class="bg-[#2e58d7] px-5 py-2 text-white hover:bg-[#416beb] active:bg-blue-800">Login</a>
                     </NotAuthorized>
                 </AuthorizeView> 
-                
+
             </div>
         </div>
     </nav>
 </header>
+
+@code {
+    private int AuthenticatedUserId;
+    public int CartsCount { get; set; } = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        CartCounter.OnDataSent += ((count) => { CartsCount = count; StateHasChanged(); });
+
+        AuthenticatedUserId = Convert.ToInt32(accessor.HttpContext!.User.FindFirstValue("UserId"));
+        List<Cart>? CartProducts = await ApiRequest.GetData<Cart>(RequestURL.Carts, AuthenticatedUserId);
+        CartsCount = CartProducts?.Count ?? 0;
+    }
+}

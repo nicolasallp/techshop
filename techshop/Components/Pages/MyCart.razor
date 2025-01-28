@@ -1,4 +1,4 @@
-﻿@page "/Cart"
+﻿@page "/Cart/{UserId}"
 @rendermode InteractiveServer
 @inject IHttpContextAccessor accessor
 @inject NavigationManager navigation
@@ -45,6 +45,9 @@
 <ModalCart isVisible="showModal" onClose="() => showModal = false" />
 
 @code {
+    [Parameter]
+    public string? UserId { get; set; }
+
     private List<Cart>? Carts;
 
     protected override async Task OnInitializedAsync()
@@ -54,6 +57,6 @@
             navigation.NavigateTo("/Login", true);
             return;
         }
-        Carts = await ApiRequest.GetData<Cart>(RequestURL.Carts);
+        Carts = await ApiRequest.GetData<Cart>(RequestURL.Carts, Convert.ToInt32(UserId));
     }
 }

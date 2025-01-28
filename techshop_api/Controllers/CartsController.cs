@@ -23,12 +23,13 @@ namespace techshop_api.Controllers
         }
 
         // GET: api/Carts
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Cart>>> GetCarts()
+        [HttpGet("ByUser/{userId}")]
+        public async Task<ActionResult<IEnumerable<Cart>>> GetCartsByUser(int userId)
         {
             return await _context.Carts
                 .Include(c => c.User)
-                .Include(c => c.Product).ToListAsync();
+                .Include(c => c.Product)
+                .Where(c => c.UserId == userId).ToListAsync();
         }
 
         // GET: api/Carts/5
