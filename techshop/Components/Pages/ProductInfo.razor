@@ -2,7 +2,7 @@
 @inject IJSRuntime JSRuntime
 @rendermode InteractiveServer
 
-<PageTitle>@Product.Name | Techshop</PageTitle>
+<PageTitle>@Product!.Name | Techshop</PageTitle>
 
 <div class="w-[1250px] bg-gray-100">
     @if (Product != null) 
@@ -70,7 +70,7 @@
 
 @code {
     [Parameter]
-    public string Id { get; set; }
+    public int Id { get; set; }
 
     Product? Product = new();
 

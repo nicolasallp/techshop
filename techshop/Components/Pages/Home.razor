@@ -1,5 +1,6 @@
 ﻿@page "/"
 @rendermode InteractiveServer
+@inject IHttpContextAccessor accessor
 
 <PageTitle>Home | TechShop</PageTitle>
 
@@ -74,7 +75,7 @@
         <div>
             <div class="mx-4 mb-2 mt-6 flex items-center bg-gray-200 p-3">
                 <ion-icon name="search" class="select-none text-2xl text-gray-700"></ion-icon>
-                <input @oninput="(e) => { searchText = (string)e.Value; FilterProducts<string>(); }" type="text" placeholder="Search product" class="ml-3 w-full bg-transparent text-[15px] text-gray-700 outline-none" />
+                <input @oninput="(e) => { searchText = (string)e.Value!; FilterProducts<string>(); }" type="text" placeholder="Search product" class="ml-3 w-full bg-transparent text-[15px] text-gray-700 outline-none" />
             </div>
         </div>
         <div class="flex flex-wrap">
@@ -82,7 +83,11 @@
             {
                 foreach (Product product in FilteredProducts)
                 {
-                    <ProductCard Product="product" />
+                    <ProductCard Product="product" 
+                        AuthenticatedUserId="userId" 
+                        IsInCart="CartProducts!.Any(c => c.ProductId == product.Id)"
+                        CartProduct="CartProducts!.Where(p => p.ProductId == product.Id).FirstOrDefault()"
+                    />
                 }
             }
 
@@ -92,10 +97,15 @@
 
 @code {
     private List<Product>? Products;
+    private List<Cart>? CartProducts = new();
+    private int userId;
 
     protected override async Task OnInitializedAsync()
     {
         Products = await ApiRequest.GetData<Product>(RequestURL.Products);
+        CartProducts = await ApiRequest.GetData<Cart>(RequestURL.Carts);
+        userId = Convert.ToInt32(accessor.HttpContext?.User.FindFirstValue("UserId"));
+        CartProducts = CartProducts!.Where(c => c.User?.Id == userId).ToList();
         FilteredProducts = Products;
     }
 
@@ -104,17 +114,17 @@
     private Dictionary<string, bool> BrandsDict = new();
     private string searchText = "";
 
-    private void FilterProducts<TKey>(ChangeEventArgs e = default, TKey filterKey = default)
+    private void FilterProducts<TKey>(ChangeEventArgs? e = null, TKey filterKey = default!)
     {
         FilteredProducts = Products;
 
         if (filterKey is decimal[] priceKey)
         {
-            PricesDict[string.Join(",", priceKey.Select(p => p.ToString("0.00", CultureInfo.InvariantCulture)))] = (bool)e.Value;
+            PricesDict[string.Join(",", priceKey.Select(p => p.ToString("0.00", CultureInfo.InvariantCulture)))] = (bool)e!.Value!;
         }
         else if (filterKey is string brandKey)
         {
-            BrandsDict[brandKey] = (bool)e.Value;
+            BrandsDict[brandKey] = (bool)e!.Value!;
         }
 
         List<string> CheckedPrices = new(PricesDict.Where(p => p.Value).ToDictionary().Keys);
@@ -122,12 +132,12 @@
 
         if (searchText.Length > 0)
         {
-            FilteredProducts = FilteredProducts.Where(p => p.Name.ToLower().Contains(searchText.ToLower())).ToList();
+            FilteredProducts = FilteredProducts!.Where(p => p.Name!.ToLower().Contains(searchText.ToLower())).ToList();
         }
 
         if (CheckedPrices.Count > 0)
         {
-            FilteredProducts = FilteredProducts.Where((p) =>
+            FilteredProducts = FilteredProducts!.Where((p) =>
             {
                 foreach (string values in CheckedPrices)
                 {
@@ -151,7 +161,7 @@
 
         if (CheckedBrands.Count > 0)
         {
-            FilteredProducts = FilteredProducts.Where(p => CheckedBrands.Contains(p.Brand)).ToList();
+            FilteredProducts = FilteredProducts!.Where(p => CheckedBrands.Contains(p.Brand!)).ToList();
         }
     }
 }
