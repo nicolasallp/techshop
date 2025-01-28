@@ -84,9 +84,9 @@
                 foreach (Product product in FilteredProducts)
                 {
                     <ProductCard Product="product" 
-                        AuthenticatedUserId="userId" 
-                        IsInCart="CartProducts!.Any(c => c.ProductId == product.Id)"
-                        CartProduct="CartProducts!.Where(p => p.ProductId == product.Id).FirstOrDefault()"
+                    AuthenticatedUserId="userId" 
+                    IsInCart="CartProducts!.Any(c => c.ProductId == product.Id)"
+                    CartProduct="CartProducts!.Where(p => p.ProductId == product.Id).FirstOrDefault()"
                     />
                 }
             }
@@ -97,15 +97,14 @@
 
 @code {
     private List<Product>? Products;
-    private List<Cart>? CartProducts = new();
+    private List<Cart>? CartProducts;
     private int userId;
 
     protected override async Task OnInitializedAsync()
     {
-        Products = await ApiRequest.GetData<Product>(RequestURL.Products);
-        CartProducts = await ApiRequest.GetData<Cart>(RequestURL.Carts);
         userId = Convert.ToInt32(accessor.HttpContext?.User.FindFirstValue("UserId"));
-        CartProducts = CartProducts!.Where(c => c.User?.Id == userId).ToList();
+        Products = await ApiRequest.GetData<Product>(RequestURL.Products);
+        CartProducts = await ApiRequest.GetData<Cart>(RequestURL.Carts, userId);
         FilteredProducts = Products;
     }
 
