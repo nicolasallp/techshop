@@ -1,6 +1,6 @@
 ﻿<div>
     <div class="flex items-center gap-8">
-        <img src="@($"{RequestURL.Resources}/{Cart.Product.Image}")" class="size-[128px] object-scale-down">
+        <img src="@($"{RequestURL.Resources}/{Cart!.Product!.Image}")" class="size-[128px] object-scale-down">
         <div>
             <p class="mb-2 w-[250px] text-gray-500">@Cart.Product.Name</p>
             <a class="cursor-pointer text-blue-700 hover:underline">View store page</a>
@@ -8,13 +8,13 @@
         <div>
             <p class="mb-2 text-center text-gray-500">Quantity</p>
             <div>
-                <button class="bg-gray-800 px-[12px] font-bold text-white text-[23px] hover:bg-gray-700">-</button>
+                <button @onclick="() => UpdateQuantity(-1)" class="bg-gray-800 px-[12px] font-bold text-white text-[23px] hover:bg-gray-700">-</button>
                 <span class="mx-4 text-lg font-semibold">@Cart.Quantity</span>
-                <button class="bg-blue-700 px-2 font-bold text-white text-[23px] hover:bg-blue-600">+</button>
+                <button @onclick="() => UpdateQuantity(1)" class="bg-blue-700 px-2 font-bold text-white text-[23px] hover:bg-blue-600">+</button>
             </div>
         </div>
         <span class="mt-8 text-xl font-semibold text-blue-950">$@Cart.Product.Price</span>
-        <button></button>
+        <button @onclick="SendCartToDelete" class="mt-8 text-lg font-bold text-red-700">X</button>
     </div>
     <hr class="my-6 h-[2px] bg-gray-200">
 </div>
@@ -22,4 +22,29 @@
 @code {
     [Parameter]
     public Cart? Cart { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnCartDelete { get; set; }
+
+    private async Task SendCartToDelete()
+    {
+        await OnCartDelete.InvokeAsync(Cart!.Id);
+    }
+
+    private async Task UpdateQuantity(int operation)
+    {
+        if (Cart!.Quantity == 1 && operation < 0)
+        {
+            return;
+        }
+        Cart!.Quantity += operation;
+
+        string data = JsonConvert.SerializeObject(new Cart
+        {
+           UserId = Cart.UserId,
+           ProductId = Cart.ProductId,
+           Quantity = Cart.Quantity
+        });
+        await ApiRequest.UpdateData(RequestURL.Carts, Cart.Id, data);
+    }
 }

@@ -49,8 +49,16 @@ namespace techshop_api.Controllers
         // PUT: api/Carts/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCart(int id, Cart cart)
+        public async Task<IActionResult> PutCart(int id, CartUpdateDto cartDto)
         {
+            Cart cart = new()
+            {
+                Id = id,
+                UserId = cartDto.UserId,
+                ProductId = cartDto.ProductId,
+                Quantity = cartDto.Quantity
+            };
+
             if (id != cart.Id)
             {
                 return BadRequest();

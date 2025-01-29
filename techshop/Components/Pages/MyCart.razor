@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 @inject IHttpContextAccessor accessor
 @inject NavigationManager navigation
+@inject CartDI CartCounter
 
 @code {
     bool showModal;
@@ -9,37 +10,43 @@
 
 <PageTitle>My Cart | TechShop</PageTitle>
 
+<base href="/" />
+
 <div class="flex w-[1250px] flex-col items-center bg-white">
-    <h1 class="mt-8 text-xl font-semibold text-blue-950">My cart</h1>
+    <h1 class="mt-8 text-xl font-semibold text-blue-950">
+        @(Carts != null ? (Carts!.Count > 0 ? "My cart" : "Cart is empty") : "")
+    </h1>
     <div class="h-full">
         @if (Carts != null)
         {
-            foreach (Cart cart in Carts)
+            if (Carts.Count > 0)
             {
-                <ProductCart Cart="cart" />
+                foreach (Cart cart in Carts)
+                {
+                    <ProductCart Cart="cart" OnCartDelete="DeleteCart" />
 
+                }
+                <div class="flex items-center justify-between">
+                    <div class="w-[300px] text-sm">
+                        <div class="flex justify-between text-gray-700">
+                            <p>Subtotal:</p>
+                            <span>$1859.32</span>
+                        </div>
+                        <hr class="my-2" />
+                        <div class="flex justify-between text-gray-700">
+                            <p>Delivery fee:</p>
+                            <span>$10.99</span>
+                        </div>
+                        <hr class="my-2" />
+                        <div class="mb-3 flex justify-between">
+                            <p class="font-bold text-gray-800">Total:</p>
+                            <span class="font-bold text-gray-800">$1874.32</span>
+                        </div>
+                        <button class="bg-blue-700 px-3 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-600 active:bg-blue-800" @onclick="() => showModal = true">Proceed to checkout</button>
+                    </div>
+                </div>
             }
         }
-        <div class="flex items-center justify-between">
-            <div class="w-[300px] text-sm">
-                <div class="flex justify-between text-gray-700">
-                    <p>Subtotal:</p>
-                    <span>$1859.32</span>
-                </div>
-                <hr class="my-2"/>
-                <div class="flex justify-between text-gray-700">
-                    <p>Delivery fee:</p>
-                    <span>$10.99</span>
-                </div>
-                <hr class="my-2" />
-                <div class="mb-3 flex justify-between">
-                    <p class="font-bold text-gray-800">Total:</p>
-                    <span class="font-bold text-gray-800">$1874.32</span>
-                </div>
-                <button class="bg-blue-700 px-3 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-600 active:bg-blue-800" @onclick="() => showModal = true">Proceed to checkout</button>
-            </div>
-
-        </div>
     </div>
 </div>
 <ModalCart isVisible="showModal" onClose="() => showModal = false" />
@@ -49,6 +56,7 @@
     public string? UserId { get; set; }
 
     private List<Cart>? Carts;
+    private decimal total;
 
     protected override async Task OnInitializedAsync()
     {
@@ -58,5 +66,12 @@
             return;
         }
         Carts = await ApiRequest.GetData<Cart>(RequestURL.Carts, Convert.ToInt32(UserId));
+    }
+
+    private async Task DeleteCart(int id)
+    {
+        await ApiRequest.DeleteData(RequestURL.Carts, id);
+        Carts = await ApiRequest.GetData<Cart>(RequestURL.Carts, Convert.ToInt32(UserId));
+        CartCounter.SendCount(Carts?.Count ?? 0);
     }
 }
