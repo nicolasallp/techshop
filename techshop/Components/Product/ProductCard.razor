@@ -66,7 +66,7 @@
             });
 
 
-        await ApiRequest.PostData(RequestURL.Carts, data);
+        await ApiRequest.CreateData(RequestURL.Carts, data);
         CartProducts = await ApiRequest.GetData<Cart>(RequestURL.Carts, AuthenticatedUserId);
         CartCounter.SendCount(CartProducts?.Count ?? 0);
         CartProduct = CartProducts!.Where(p => p.ProductId == Product!.Id).FirstOrDefault();

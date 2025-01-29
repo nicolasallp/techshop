@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Text;
 using techshop.Models.Entities;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace techshop.DataManager
 {
@@ -30,10 +31,16 @@ namespace techshop.DataManager
             return JsonConvert.DeserializeObject<T>(responseData);
         }
 
-        public static async Task PostData(string url, string data)
+        public static async Task CreateData(string url, string data)
         {
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
             await HttpClient.PostAsync(url, content);
+        }
+
+        public static async Task UpdateData(string url, int id, string data)
+        {
+            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+            await HttpClient.PutAsync($"{url}/{id}", content);
         }
 
         public static async Task DeleteData(string url, int id)
