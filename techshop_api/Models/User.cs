@@ -7,9 +7,9 @@ namespace techshop_api.Models
     public class User
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("id")]
-        public int Id { get; set; }
+        [MaxLength(36)]
+        public string? Id { get; set; }
 
         [Column("name")]
         [MaxLength(100)]

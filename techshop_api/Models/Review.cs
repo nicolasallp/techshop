@@ -7,16 +7,18 @@ namespace techshop_api.Models
     public class Review
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("id")]
-        public int Id { get; set; }
-        
+        [MaxLength(36)]
+        public string? Id { get; set; }
+
         [Column("product_id")]
-        public int ProductId { get; set; }
-        
+        [MaxLength(36)]
+        public string? ProductId { get; set; }
+
         [Column("user_id")]
-        public int UserId { get; set; }
-        
+        [MaxLength(36)]
+        public string? UserId { get; set; }
+
         [Column("rating")]
         public int Rating { get; set; }
         

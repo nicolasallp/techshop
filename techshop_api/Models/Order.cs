@@ -8,19 +8,20 @@ namespace techshop_api.Models
     public class Order
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("id")]
-        public int Id { get; set; }
+        [MaxLength(36)]
+        public string? Id { get; set; }
 
         [Column("product_id")]
-        public int ProductId { get; set; }
+        [MaxLength(36)]
+        public string? ProductId { get; set; }
 
         [Column("user_id")]
-        public int UserId { get; set; }
+        [MaxLength(36)]
+        public string? UserId { get; set; }
 
-        [Column("fee")]
-        [Precision(4, 2)]
-        public decimal Fee { get; set; }
+        [Column("quantity")]
+        public int Quantity { get; set; }
 
         [Column("status")]
         [MaxLength(20)]

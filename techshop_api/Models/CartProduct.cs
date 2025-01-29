@@ -3,19 +3,19 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace techshop_api.Models
 {
-    [Table("cart")]
-    public class Cart
+    [Table("cart_product")]
+    public class CartProduct
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("id")]
-        public int Id { get; set; }
+        [MaxLength(36)]
+        public string? Id { get; set; }
 
         [Column("user_id")]
-        public int UserId { get; set; }
+        public string? UserId { get; set; }
         
         [Column("product_id")]
-        public int ProductId { get; set; }
+        public string? ProductId { get; set; }
         
         [Column("quantity")]
         public int Quantity { get; set; }
