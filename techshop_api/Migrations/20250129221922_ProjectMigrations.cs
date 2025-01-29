@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace techshop_api.Migrations
 {
     /// <inheritdoc />
-    public partial class TechshopMigrations : Migration
+    public partial class ProjectMigrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,8 +15,7 @@ namespace techshop_api.Migrations
                 name: "admin",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
                     email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     password = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -29,13 +28,12 @@ namespace techshop_api.Migrations
                 name: "product",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
                     name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     price = table.Column<decimal>(type: "decimal(6,2)", precision: 6, scale: 2, nullable: false),
                     brand = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    image = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    image = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     availability = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -47,8 +45,7 @@ namespace techshop_api.Migrations
                 name: "user",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
                     name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     password = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
@@ -65,41 +62,37 @@ namespace techshop_api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "cart",
+                name: "cart_product",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    user_id = table.Column<int>(type: "int", nullable: false),
-                    product_id = table.Column<int>(type: "int", nullable: false),
+                    id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
+                    user_id = table.Column<string>(type: "nvarchar(36)", nullable: true),
+                    product_id = table.Column<string>(type: "nvarchar(36)", nullable: true),
                     quantity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_cart", x => x.id);
+                    table.PrimaryKey("PK_cart_product", x => x.id);
                     table.ForeignKey(
-                        name: "FK_cart_product_product_id",
+                        name: "FK_cart_product_product_product_id",
                         column: x => x.product_id,
                         principalTable: "product",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                     table.ForeignKey(
-                        name: "FK_cart_user_user_id",
+                        name: "FK_cart_product_user_user_id",
                         column: x => x.user_id,
                         principalTable: "user",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "order",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    product_id = table.Column<int>(type: "int", nullable: false),
-                    user_id = table.Column<int>(type: "int", nullable: false),
-                    fee = table.Column<decimal>(type: "decimal(4,2)", precision: 4, scale: 2, nullable: false),
+                    id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
+                    product_id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: true),
+                    user_id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: true),
+                    quantity = table.Column<int>(type: "int", nullable: false),
                     status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true)
                 },
                 constraints: table =>
@@ -109,24 +102,21 @@ namespace techshop_api.Migrations
                         name: "FK_order_product_product_id",
                         column: x => x.product_id,
                         principalTable: "product",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "FK_order_user_user_id",
                         column: x => x.user_id,
                         principalTable: "user",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "review",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    product_id = table.Column<int>(type: "int", nullable: false),
-                    user_id = table.Column<int>(type: "int", nullable: false),
+                    id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
+                    product_id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: true),
+                    user_id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: true),
                     rating = table.Column<int>(type: "int", nullable: false),
                     review_text = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     created_date = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -138,24 +128,22 @@ namespace techshop_api.Migrations
                         name: "FK_review_product_product_id",
                         column: x => x.product_id,
                         principalTable: "product",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "FK_review_user_user_id",
                         column: x => x.user_id,
                         principalTable: "user",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_cart_product_id",
-                table: "cart",
+                name: "IX_cart_product_product_id",
+                table: "cart_product",
                 column: "product_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_cart_user_id",
-                table: "cart",
+                name: "IX_cart_product_user_id",
+                table: "cart_product",
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
@@ -186,7 +174,7 @@ namespace techshop_api.Migrations
                 name: "admin");
 
             migrationBuilder.DropTable(
-                name: "cart");
+                name: "cart_product");
 
             migrationBuilder.DropTable(
                 name: "order");

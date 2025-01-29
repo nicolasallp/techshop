@@ -24,12 +24,10 @@ namespace techshop_api.Migrations
 
             modelBuilder.Entity("techshop_api.Models.Admin", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)")
                         .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)")
@@ -44,25 +42,23 @@ namespace techshop_api.Migrations
                     b.ToTable("admin");
                 });
 
-            modelBuilder.Entity("techshop_api.Models.Cart", b =>
+            modelBuilder.Entity("techshop_api.Models.CartProduct", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int")
+                    b.Property<string>("ProductId")
+                        .HasColumnType("nvarchar(36)")
                         .HasColumnName("product_id");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int")
                         .HasColumnName("quantity");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int")
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(36)")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id");
@@ -71,34 +67,33 @@ namespace techshop_api.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("cart");
+                    b.ToTable("cart_product");
                 });
 
             modelBuilder.Entity("techshop_api.Models.Order", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Fee")
-                        .HasPrecision(4, 2)
-                        .HasColumnType("decimal(4,2)")
-                        .HasColumnName("fee");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int")
+                    b.Property<string>("ProductId")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)")
                         .HasColumnName("product_id");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int")
+                        .HasColumnName("quantity");
 
                     b.Property<string>("Status")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)")
                         .HasColumnName("status");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int")
+                    b.Property<string>("UserId")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id");
@@ -112,12 +107,10 @@ namespace techshop_api.Migrations
 
             modelBuilder.Entity("techshop_api.Models.Product", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)")
                         .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Availability")
                         .HasColumnType("int")
@@ -154,19 +147,18 @@ namespace techshop_api.Migrations
 
             modelBuilder.Entity("techshop_api.Models.Review", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)")
                         .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("created_date");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int")
+                    b.Property<string>("ProductId")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)")
                         .HasColumnName("product_id");
 
                     b.Property<int>("Rating")
@@ -178,8 +170,9 @@ namespace techshop_api.Migrations
                         .HasColumnType("nvarchar(500)")
                         .HasColumnName("review_text");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int")
+                    b.Property<string>("UserId")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id");
@@ -193,12 +186,10 @@ namespace techshop_api.Migrations
 
             modelBuilder.Entity("techshop_api.Models.User", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)")
                         .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address1")
                         .HasMaxLength(100)
@@ -249,19 +240,15 @@ namespace techshop_api.Migrations
                     b.ToTable("user");
                 });
 
-            modelBuilder.Entity("techshop_api.Models.Cart", b =>
+            modelBuilder.Entity("techshop_api.Models.CartProduct", b =>
                 {
                     b.HasOne("techshop_api.Models.Product", "Product")
                         .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProductId");
 
                     b.HasOne("techshop_api.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Product");
 
@@ -272,15 +259,11 @@ namespace techshop_api.Migrations
                 {
                     b.HasOne("techshop_api.Models.Product", "Product")
                         .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProductId");
 
                     b.HasOne("techshop_api.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Product");
 
@@ -291,15 +274,11 @@ namespace techshop_api.Migrations
                 {
                     b.HasOne("techshop_api.Models.Product", "Product")
                         .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProductId");
 
                     b.HasOne("techshop_api.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Product");
 
