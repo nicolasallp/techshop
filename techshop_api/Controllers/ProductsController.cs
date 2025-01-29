@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Azure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,16 +22,14 @@ namespace techshop_api.Controllers
             _context = context;
         }
 
-        // GET: api/Products
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
             return await _context.Products.ToListAsync();
         }
 
-        // GET: api/Products/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        public async Task<ActionResult<Product>> GetProduct(string id)
         {
             var product = await _context.Products.FindAsync(id);
 
@@ -44,10 +41,8 @@ namespace techshop_api.Controllers
             return product;
         }
 
-        // PUT: api/Products/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(int id, Product product)
+        public async Task<IActionResult> PutProduct(string id, Product product)
         {
             if (id != product.Id)
             {
@@ -75,14 +70,12 @@ namespace techshop_api.Controllers
             return NoContent();
         }
 
-        // POST: api/Products
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Product>> PostProduct(ProductCreateDto productDTO)
+        public async Task<ActionResult<Product>> PostProduct(ProductCreateDto productDto)
         {
-            string base64Data = productDTO.Image.Split(",")[0];
-            string fileName = productDTO.Image.Split(",")[1];
-            string contentType = productDTO.Image.Split(",")[2];
+            string base64Data = productDto.Image!.Split(",")[0];
+            string fileName = productDto.Image.Split(",")[1];
+            string contentType = productDto.Image.Split(",")[2];
 
             byte[] fileBytes = Convert.FromBase64String(base64Data);
             using MemoryStream memoryStream = new MemoryStream(fileBytes);
@@ -100,22 +93,22 @@ namespace techshop_api.Controllers
 
             Product product = new Product
             {
-                Name = productDTO.Name,
-                Description = productDTO.Description,
-                Price = productDTO.Price,
-                Brand = productDTO.Brand,
-                Availability = productDTO.Availability,
+                Name = productDto.Name,
+                Description = productDto.Description,
+                Price = productDto.Price,
+                Brand = productDto.Brand,
+                Availability = productDto.Availability,
                 Image = imageName
             };
+
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
         }
 
-        // DELETE: api/Products/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProduct(int id)
+        public async Task<IActionResult> DeleteProduct(string id)
         {
             var product = await _context.Products.FindAsync(id);
             if (product == null)
@@ -129,7 +122,7 @@ namespace techshop_api.Controllers
             return NoContent();
         }
 
-        private bool ProductExists(int id)
+        private bool ProductExists(string id)
         {
             return _context.Products.Any(e => e.Id == id);
         }

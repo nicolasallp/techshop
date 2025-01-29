@@ -12,43 +12,43 @@ namespace techshop_api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AdminsController : ControllerBase
+    public class OrdersController : ControllerBase
     {
         private readonly AppDbContext _context;
 
-        public AdminsController(AppDbContext context)
+        public OrdersController(AppDbContext context)
         {
             _context = context;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Admin>>> GetAdmins()
+        public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
         {
-            return await _context.Admins.ToListAsync();
+            return await _context.Orders.ToListAsync();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Admin>> GetAdmin(string id)
+        public async Task<ActionResult<Order>> GetOrder(string id)
         {
-            var admin = await _context.Admins.FindAsync(id);
+            var order = await _context.Orders.FindAsync(id);
 
-            if (admin == null)
+            if (order == null)
             {
                 return NotFound();
             }
 
-            return admin;
+            return order;
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAdmin(string id, Admin admin)
+        public async Task<IActionResult> PutOrder(string id, Order order)
         {
-            if (id != admin.Id)
+            if (id != order.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(admin).State = EntityState.Modified;
+            _context.Entry(order).State = EntityState.Modified;
 
             try
             {
@@ -56,7 +56,7 @@ namespace techshop_api.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!AdminExists(id))
+                if (!OrderExists(id))
                 {
                     return NotFound();
                 }
@@ -70,16 +70,16 @@ namespace techshop_api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Admin>> PostAdmin(Admin admin)
+        public async Task<ActionResult<Order>> PostOrder(Order order)
         {
-            _context.Admins.Add(admin);
+            _context.Orders.Add(order);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (AdminExists(admin.Id!))
+                if (OrderExists(order.Id!))
                 {
                     return Conflict();
                 }
@@ -89,27 +89,27 @@ namespace techshop_api.Controllers
                 }
             }
 
-            return CreatedAtAction(nameof(GetAdmin), new { id = admin.Id }, admin);
+            return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAdmin(string id)
+        public async Task<IActionResult> DeleteOrder(string id)
         {
-            var admin = await _context.Admins.FindAsync(id);
-            if (admin == null)
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null)
             {
                 return NotFound();
             }
 
-            _context.Admins.Remove(admin);
+            _context.Orders.Remove(order);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool AdminExists(string id)
+        private bool OrderExists(string id)
         {
-            return _context.Admins.Any(e => e.Id == id);
+            return _context.Orders.Any(e => e.Id == id);
         }
     }
 }
