@@ -23,24 +23,24 @@
             {
                 foreach (Cart cart in Carts)
                 {
-                    <ProductCart Cart="cart" OnCartDelete="DeleteCart" />
+                    <ProductCart Cart="cart" OnCartDelete="DeleteCart" OnQuantityUpdate="UpdateQuantity" />
 
                 }
-                <div class="flex items-center justify-between">
+                <div class="mb-6 flex items-center justify-between">
                     <div class="w-[300px] text-sm">
                         <div class="flex justify-between text-gray-700">
                             <p>Subtotal:</p>
-                            <span>$1859.32</span>
+                            <span>$@Math.Round(subTotal, 2)</span>
                         </div>
                         <hr class="my-2" />
                         <div class="flex justify-between text-gray-700">
                             <p>Delivery fee:</p>
-                            <span>$10.99</span>
+                            <span>$8.59</span>
                         </div>
                         <hr class="my-2" />
                         <div class="mb-3 flex justify-between">
                             <p class="font-bold text-gray-800">Total:</p>
-                            <span class="font-bold text-gray-800">$1874.32</span>
+                            <span class="font-bold text-gray-800">$@Math.Round(subTotal + 8.59m,2)</span>
                         </div>
                         <button class="bg-blue-700 px-3 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-600 active:bg-blue-800" @onclick="() => showModal = true">Proceed to checkout</button>
                     </div>
@@ -49,14 +49,14 @@
         }
     </div>
 </div>
-<ModalCart isVisible="showModal" onClose="() => showModal = false" />
+<ModalCart SubTotal="Math.Round(subTotal, 2)" isVisible="showModal" onClose="() => showModal = false" />
 
 @code {
     [Parameter]
     public string? UserId { get; set; }
 
     private List<Cart>? Carts;
-    private decimal total;
+    private decimal subTotal = 0;
 
     protected override async Task OnInitializedAsync()
     {
@@ -65,7 +65,16 @@
             navigation.NavigateTo("/Login", true);
             return;
         }
+
         Carts = await ApiRequest.GetData<Cart>(RequestURL.Carts, Convert.ToInt32(UserId));
+        Carts!.ForEach(c => subTotal += c.Product!.Price * c.Quantity);
+    }
+
+    private async Task UpdateQuantity(decimal quantity)
+    {
+        subTotal = 0;
+        Carts = await ApiRequest.GetData<Cart>(RequestURL.Carts, Convert.ToInt32(UserId));
+        Carts!.ForEach(c => subTotal += c.Product!.Price * c.Quantity);
     }
 
     private async Task DeleteCart(int id)

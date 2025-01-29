@@ -26,6 +26,9 @@
     [Parameter]
     public EventCallback<int> OnCartDelete { get; set; }
 
+    [Parameter]
+    public EventCallback<decimal> OnQuantityUpdate { get; set; }
+
     private async Task SendCartToDelete()
     {
         await OnCartDelete.InvokeAsync(Cart!.Id);
@@ -46,5 +49,7 @@
            Quantity = Cart.Quantity
         });
         await ApiRequest.UpdateData(RequestURL.Carts, Cart.Id, data);
+
+        await OnQuantityUpdate.InvokeAsync(Cart.Quantity);
     }
 }
