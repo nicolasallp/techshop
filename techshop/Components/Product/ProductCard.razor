@@ -35,15 +35,15 @@
     public Product? Product { get; set; }
 
     [Parameter]
-    public int AuthenticatedUserId { get; set; }
+    public string? AuthenticatedUserId { get; set; }
 
     [Parameter]
-    public Cart? CartProduct { get; set; }
+    public CartProduct? CartProduct { get; set; }
 
     [Parameter]
     public bool IsInCart { get; set; }
 
-    List<Cart>? CartProducts;
+    List<CartProduct>? CartProducts;
 
     private async void AddToCart()
     {
@@ -51,23 +51,24 @@
         if (IsInCart && CartProduct != null)
         {
             IsInCart = false;
-            await ApiRequest.DeleteData(RequestURL.Carts, CartProduct!.Id);
-            CartProducts = await ApiRequest.GetData<Cart>(RequestURL.Carts, AuthenticatedUserId);
+            await ApiRequest.DeleteData(RequestURL.CartProducts, CartProduct.Id!);
+            CartProducts = await ApiRequest.GetData<CartProduct>(RequestURL.CartProducts, AuthenticatedUserId!);
             CartCounter.SendCount(CartProducts?.Count ?? 0);
             return;
         }
 
         IsInCart = true;
-        string data = JsonConvert.SerializeObject(new Cart
+        string data = JsonConvert.SerializeObject(new CartProduct
             {
+                Id = Guid.NewGuid().ToString(),
                 UserId = AuthenticatedUserId,
                 ProductId = Product!.Id,
                 Quantity = 1
             });
 
 
-        await ApiRequest.CreateData(RequestURL.Carts, data);
-        CartProducts = await ApiRequest.GetData<Cart>(RequestURL.Carts, AuthenticatedUserId);
+        await ApiRequest.CreateData(RequestURL.CartProducts, data);
+        CartProducts = await ApiRequest.GetData<CartProduct>(RequestURL.CartProducts, AuthenticatedUserId!);
         CartCounter.SendCount(CartProducts?.Count ?? 0);
         CartProduct = CartProducts!.Where(p => p.ProductId == Product!.Id).FirstOrDefault();
         return;
