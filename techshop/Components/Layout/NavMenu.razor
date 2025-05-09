@@ -14,8 +14,17 @@
                         <NavLink class="hover:underline" href="/">PRODUCTS</NavLink>
                     </li>
                     <li>
-                        <a class="hover:underline"
-                        href='@($"Cart/{AuthenticatedUserId}")'>CART (@CartsCount)</a>
+                        <AuthorizeView>
+                            <Authorized>
+                                <a class="hover:underline" 
+                                href='@($"Cart/{AuthenticatedUserId}")'>CART (@CartsCount)</a>
+                            </Authorized>
+                            <NotAuthorized>
+                                <a class="hover:underline"
+                                   href='Login'>CART (0)</a>
+                            </NotAuthorized>
+                        </AuthorizeView>
+
                     </li>
                 </ul>
             </div>
@@ -35,15 +44,19 @@
 </header>
 
 @code {
-    private int AuthenticatedUserId;
+    private string? AuthenticatedUserId;
     public int CartsCount { get; set; } = 0;
 
     protected override async Task OnInitializedAsync()
     {
         CartCounter.OnDataSent += ((count) => { CartsCount = count; StateHasChanged(); });
 
-        AuthenticatedUserId = Convert.ToInt32(accessor.HttpContext!.User.FindFirstValue("UserId"));
-        List<Cart>? CartProducts = await ApiRequest.GetData<Cart>(RequestURL.Carts, AuthenticatedUserId);
-        CartsCount = CartProducts?.Count ?? 0;
+        AuthenticatedUserId = accessor.HttpContext?.User.FindFirstValue("UserId");
+
+        if (AuthenticatedUserId is not null)
+        {
+            List<CartProduct>? CartProducts = await ApiRequest.GetData<CartProduct>(RequestURL.CartProducts, AuthenticatedUserId);
+            CartsCount = CartProducts?.Count ?? 0;
+        }
     }
 }
