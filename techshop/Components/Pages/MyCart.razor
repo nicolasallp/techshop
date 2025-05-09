@@ -14,16 +14,16 @@
 
 <div class="flex w-[1250px] flex-col items-center bg-white">
     <h1 class="mt-8 text-xl font-semibold text-blue-950">
-        @(Carts != null ? (Carts!.Count > 0 ? "My cart" : "Cart is empty") : "")
+        @(CartProducts != null ? (CartProducts.Count > 0 ? "My cart" : "Cart is empty") : "")
     </h1>
     <div class="h-full">
-        @if (Carts != null)
+        @if (CartProducts != null)
         {
-            if (Carts.Count > 0)
+            if (CartProducts.Count > 0)
             {
-                foreach (Cart cart in Carts)
+                foreach (CartProduct cart in CartProducts)
                 {
-                    <ProductCart Cart="cart" OnCartDelete="DeleteCart" OnQuantityUpdate="UpdateQuantity" />
+                    <CartProductCard CartProduct="cart" OnCartDelete="DeleteCart" OnQuantityUpdate="UpdateQuantity" />
 
                 }
                 <div class="mb-6 flex items-center justify-between">
@@ -55,7 +55,7 @@
     [Parameter]
     public string? UserId { get; set; }
 
-    private List<Cart>? Carts;
+    private List<CartProduct>? CartProducts;
     private decimal subTotal = 0;
 
     protected override async Task OnInitializedAsync()
@@ -66,21 +66,21 @@
             return;
         }
 
-        Carts = await ApiRequest.GetData<Cart>(RequestURL.Carts, Convert.ToInt32(UserId));
-        Carts!.ForEach(c => subTotal += c.Product!.Price * c.Quantity);
+        CartProducts = await ApiRequest.GetData<CartProduct>(RequestURL.CartProducts, UserId!) ?? new();
+        CartProducts!.ForEach(c => subTotal += c.Product!.Price * c.Quantity);
     }
 
     private async Task UpdateQuantity(decimal quantity)
     {
         subTotal = 0;
-        Carts = await ApiRequest.GetData<Cart>(RequestURL.Carts, Convert.ToInt32(UserId));
-        Carts!.ForEach(c => subTotal += c.Product!.Price * c.Quantity);
+        CartProducts = await ApiRequest.GetData<CartProduct>(RequestURL.CartProducts, UserId!);
+        CartProducts!.ForEach(c => subTotal += c.Product!.Price * c.Quantity);
     }
 
-    private async Task DeleteCart(int id)
+    private async Task DeleteCart(string id)
     {
-        await ApiRequest.DeleteData(RequestURL.Carts, id);
-        Carts = await ApiRequest.GetData<Cart>(RequestURL.Carts, Convert.ToInt32(UserId));
-        CartCounter.SendCount(Carts?.Count ?? 0);
+        await ApiRequest.DeleteData(RequestURL.CartProducts, id);
+        CartProducts = await ApiRequest.GetData<CartProduct>(RequestURL.CartProducts, UserId!);
+        CartCounter.SendCount(CartProducts?.Count ?? 0);
     }
 }

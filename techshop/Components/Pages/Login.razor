@@ -37,29 +37,33 @@
     public LoginViewModel Model { get; set; } = new();
 
     [CascadingParameter]
-    HttpContext HttpContext { get; set; }
+    HttpContext? HttpContext { get; set; }
 
-    private string errorMessage;
+    private string errorMessage = String.Empty;
 
     private async Task Authenticate()
     {
-        User user = (await ApiRequest.GetData<User>(RequestURL.Users))
-            .Where(x => x.Email == Model.Email).FirstOrDefault();
-        if (user is null || !BCrypt.Verify(Model.Password, user.Password))
+        List<User>? users = await ApiRequest.GetData<User>(RequestURL.Users);
+
+        if (users != null)
         {
-            errorMessage = "Invalid email or password.";
-            return;
+            User? user = users.Where(x => x.Email == Model.Email).FirstOrDefault();
+            if (user is not null && BCrypt.Verify(Model.Password, user.Password))
+            {
+                List<Claim> claims = new()
+                {
+                    new Claim(ClaimTypes.Email, user.Email!),
+                    new Claim("UserId", user.Id!)
+                };
+
+                ClaimsIdentity identity = new(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                ClaimsPrincipal principal = new(identity);
+
+                await HttpContext!.SignInAsync(principal);
+                navigation.NavigateTo("/");
+                return;
+            }
         }
-
-        List<Claim> claims = new()
-        {
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim("UserId", user.Id.ToString())
-        };
-        ClaimsIdentity identity =  new(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        ClaimsPrincipal principal = new(identity);
-
-        await HttpContext.SignInAsync(principal);
-        navigation.NavigateTo("/");
+        errorMessage = "Invalid email or password.";
     }
 }

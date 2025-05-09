@@ -70,13 +70,13 @@
 
 @code {
     [Parameter]
-    public int Id { get; set; }
+    public string? Id { get; set; }
 
     Product? Product = new();
 
     protected override async Task OnInitializedAsync()
     {
-        Product = await ApiRequest.GetDataById<Product>(RequestURL.Products, Id);
+        Product = await ApiRequest.GetDataById<Product>(RequestURL.Products, Id!);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
