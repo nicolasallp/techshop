@@ -25,13 +25,13 @@ namespace techshop_api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CartProduct>>> GetCarts()
         {
-            return await _context.Carts.ToListAsync();
+            return await _context.CartProducts.ToListAsync();
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<CartProduct>> GetCartProduct(string id)
         {
-            var cartProduct = await _context.Carts.FindAsync(id);
+            var cartProduct = await _context.CartProducts.FindAsync(id);
 
             if (cartProduct == null)
             {
@@ -41,18 +41,26 @@ namespace techshop_api.Controllers
             return cartProduct;
         }
 
-        [HttpGet("ByUser/{userId}")]
+        [HttpGet("ByUser/{id}")]
         public async Task<ActionResult<IEnumerable<CartProduct>>> GetCartsByUser(string id)
         {
-            return await _context.Carts
+            return await _context.CartProducts
                 .Include(c => c.User)
                 .Include(c => c.Product)
                 .Where(c => c.UserId == id).ToListAsync();
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCartProduct(string id, CartProduct cartProduct)
+        public async Task<IActionResult> PutCartProduct(string id, CartProductUpdateDto cartProductDto)
         {
+            CartProduct cartProduct = new()
+            {
+                Id = id,
+                UserId = cartProductDto.UserId,
+                ProductId = cartProductDto.ProductId,
+                Quantity = cartProductDto.Quantity
+            };
+
             if (id != cartProduct.Id)
             {
                 return BadRequest();
@@ -80,7 +88,7 @@ namespace techshop_api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CartProduct>> PostCartProduct(CartProductDto cartProductDto)
+        public async Task<ActionResult<CartProduct>> PostCartProduct(CartProductCreateDto cartProductDto)
         {
             CartProduct cart = new CartProduct
             {
@@ -89,7 +97,7 @@ namespace techshop_api.Controllers
                 ProductId = cartProductDto.ProductId,
                 Quantity = cartProductDto.Quantity
             };
-            _context.Carts.Add(cart);
+            _context.CartProducts.Add(cart);
 
             try
             {
@@ -113,13 +121,13 @@ namespace techshop_api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCartProduct(string id)
         {
-            var cartProduct = await _context.Carts.FindAsync(id);
+            var cartProduct = await _context.CartProducts.FindAsync(id);
             if (cartProduct == null)
             {
                 return NotFound();
             }
 
-            _context.Carts.Remove(cartProduct);
+            _context.CartProducts.Remove(cartProduct);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -127,7 +135,7 @@ namespace techshop_api.Controllers
 
         private bool CartProductExists(string id)
         {
-            return _context.Carts.Any(e => e.Id == id);
+            return _context.CartProducts.Any(e => e.Id == id);
         }
     }
 }

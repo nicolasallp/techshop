@@ -73,9 +73,9 @@ namespace techshop_api.Controllers
         [HttpPost]
         public async Task<ActionResult<Product>> PostProduct(ProductCreateDto productDto)
         {
-            string base64Data = productDto.Image!.Split(",")[0];
-            string fileName = productDto.Image.Split(",")[1];
-            string contentType = productDto.Image.Split(",")[2];
+            string base64Data = productDto.ImageData!.Split(",")[0];
+            string fileName = productDto.ImageData.Split(",")[1];
+            string contentType = productDto.ImageData.Split(",")[2];
 
             byte[] fileBytes = Convert.FromBase64String(base64Data);
             using MemoryStream memoryStream = new MemoryStream(fileBytes);
@@ -85,14 +85,15 @@ namespace techshop_api.Controllers
                 ContentType = contentType
             };
 
-            string extension = Path.GetExtension(file.FileName);
-            string imageName = Guid.NewGuid().ToString() + extension;
+            string imageName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
             string path = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+
             using FileStream stream = new FileStream(Path.Combine(path, imageName), FileMode.Create);
             await file.CopyToAsync(stream);
 
             Product product = new Product
             {
+                Id = productDto.Id,
                 Name = productDto.Name,
                 Description = productDto.Description,
                 Price = productDto.Price,
