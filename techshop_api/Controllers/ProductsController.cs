@@ -73,23 +73,23 @@ namespace techshop_api.Controllers
         [HttpPost]
         public async Task<ActionResult<Product>> PostProduct(ProductCreateDto productDto)
         {
-            string base64Data = productDto.ImageData!.Split(",")[0];
-            string fileName = productDto.ImageData.Split(",")[1];
-            string contentType = productDto.ImageData.Split(",")[2];
+            //string base64Data = productDto.Image!.Split(",")[0];
+            //string fileName = productDto.Image.Split(",")[1];
+            //string contentType = productDto.Image.Split(",")[2];
 
-            byte[] fileBytes = Convert.FromBase64String(base64Data);
-            using MemoryStream memoryStream = new MemoryStream(fileBytes);
-            IFormFile file = new FormFile(memoryStream, 0, fileBytes.Length, "file", fileName)
-            {
-                Headers = new HeaderDictionary(),
-                ContentType = contentType
-            };
+            //byte[] fileBytes = Convert.FromBase64String(base64Data);
+            //using MemoryStream memoryStream = new MemoryStream(fileBytes);
+            //IFormFile file = new FormFile(memoryStream, 0, fileBytes.Length, "file", fileName)
+            //{
+            //    Headers = new HeaderDictionary(),
+            //    ContentType = contentType
+            //};
 
-            string imageName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+            //string imageName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+            //string path = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
 
-            using FileStream stream = new FileStream(Path.Combine(path, imageName), FileMode.Create);
-            await file.CopyToAsync(stream);
+            //using FileStream stream = new FileStream(Path.Combine(path, imageName), FileMode.Create);
+            //await file.CopyToAsync(stream);
 
             Product product = new Product
             {
@@ -99,7 +99,7 @@ namespace techshop_api.Controllers
                 Price = productDto.Price,
                 Brand = productDto.Brand,
                 Availability = productDto.Availability,
-                Image = imageName
+                Image = productDto.Image
             };
 
             _context.Products.Add(product);

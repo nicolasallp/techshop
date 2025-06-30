@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using techshop_api.Data;
+using techshop_api.Dtos;
 using techshop_api.Models;
 
 namespace techshop_api.Controllers
@@ -70,8 +71,16 @@ namespace techshop_api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult<User>> PostUser(UserCreateDto userDto)
         {
+            User user = new()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = userDto.Name,
+                Email = userDto.Email,
+                Password = userDto.Password,
+                CreatedDate = userDto.CreatedDate
+            };
             _context.Users.Add(user);
             try
             {

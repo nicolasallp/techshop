@@ -92,7 +92,7 @@ namespace techshop_api.Controllers
         {
             CartProduct cart = new CartProduct
             {
-                Id = cartProductDto.Id,
+                Id = Guid.NewGuid().ToString(),
                 UserId = cartProductDto.UserId,
                 ProductId = cartProductDto.ProductId,
                 Quantity = cartProductDto.Quantity

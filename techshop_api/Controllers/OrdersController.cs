@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using techshop_api.Data;
+using techshop_api.Dtos;
 using techshop_api.Models;
 
 namespace techshop_api.Controllers
@@ -70,8 +71,16 @@ namespace techshop_api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Order>> PostOrder(Order order)
+        public async Task<ActionResult<Order>> PostOrder(OrderCreateDto orderDto)
         {
+            Order order = new()
+            {
+                Id = Guid.NewGuid().ToString(),
+                ProductId = orderDto.ProductId,
+                UserId = orderDto.UserId,
+                Quantity = orderDto.Quantity,
+                Status = "Pending"
+            };
             _context.Orders.Add(order);
             try
             {
