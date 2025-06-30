@@ -1,4 +1,6 @@
-﻿@code {
+﻿@inject CartState CartCounter
+
+@code {
     [Parameter]
     public decimal SubTotal { get; set; }
 
@@ -16,6 +18,7 @@
             <button class="place-self-start text-xl font-semibold text-white" @onclick="onClose!">X</button>
             <div class="bg-white p-4">
                 <EditForm FormName="OrderForm" Model="Model" >
+                    <DataAnnotationsValidator />
                     <div class="mb-3">
                         <div class="w-full">
                             <label for="address1" class="mb-2 block text-sm font-medium text-gray-700">Address Line 1<span class="ml-2 text-red-500">*</span></label>
@@ -32,7 +35,7 @@
                         <div class="mb-3 w-full">
                             <div class="w-full">
                                 <label for="city" class="mb-2 block text-sm font-medium text-gray-700">City<span class="ml-2 text-red-500">*</span></label>
-                                <InputText @bind-Value="Model.City" type="text" id="city" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-gray-800" required />
+                                <InputText @bind-Value="Model.City" type="text" id="city" class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-gray-800" />
                                 <ValidationMessage For="() => Model.City" />
                             </div>
                         </div>
@@ -76,8 +79,38 @@
     [SupplyParameterFromForm]
     public OrderViewModel Model { get; set; } = new();
 
-    // private async Task FinishOrder()
-    // {
+    [Parameter]
+    public List<CartProduct>? CartProducts { get; set; }
 
-    // }
+    [Parameter]
+    public string? UserId { get; set; }
+
+    private async Task FinishOrder()
+    {
+        foreach (CartProduct cartProduct in CartProducts!)
+        {
+            string data = JsonConvert.SerializeObject(new Order
+            {
+                ProductId = cartProduct.ProductId,
+                UserId = UserId,
+                Quantity = cartProduct.Quantity
+            });
+
+            await ApiRequest.CreateData(RequestURL.Orders, data);
+
+            await ApiRequest.DeleteData(RequestURL.CartProducts, cartProduct.Id!);
+            CartProducts = await ApiRequest.GetData<CartProduct>(RequestURL.CartProducts, UserId!);
+            CartCounter.SendCount(CartProducts?.Count ?? 0);
+        }
+
+        string addressData = JsonConvert.SerializeObject(new User
+        {
+            Address1 = Model.Address1,
+            Address2 = Model.Address2,
+            City = Model.City,
+            State = Model.State,
+            PostalCode = Model.PostalCode
+        });
+        await ApiRequest.UpdateData(RequestURL.Users, UserId!, addressData);
+    }
 }
