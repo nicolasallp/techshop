@@ -1,6 +1,6 @@
 ﻿@using techshop.Components.Layout
 @inject NavigationManager NavigationManager
-@inject CartDI CartCounter
+@inject CartState CartCounter
 
 <div class="m-4 bg-gray-50">
     <div class="h-fit w-[300px] border border-gray-300 hover:border-blue-600">
@@ -60,12 +60,10 @@
         IsInCart = true;
         string data = JsonConvert.SerializeObject(new CartProduct
             {
-                Id = Guid.NewGuid().ToString(),
                 UserId = AuthenticatedUserId,
                 ProductId = Product!.Id,
                 Quantity = 1
             });
-
 
         await ApiRequest.CreateData(RequestURL.CartProducts, data);
         CartProducts = await ApiRequest.GetData<CartProduct>(RequestURL.CartProducts, AuthenticatedUserId!);
