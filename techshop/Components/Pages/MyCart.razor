@@ -88,4 +88,5 @@
         CartProducts = await ApiRequest.GetData<CartProduct>(RequestURL.CartProducts, UserId!);
         CartCounter.SendCount(CartProducts?.Count ?? 0);
     }
+    //Teste
 }
