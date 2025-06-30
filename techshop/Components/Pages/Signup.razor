@@ -65,7 +65,6 @@
 
         string data = JsonConvert.SerializeObject(new User
             {
-                Id = Guid.NewGuid().ToString(),
                 Name = $"{Model.FirstName} {Model.LastName}",
                 Email = Model.Email,
                 Password = BCrypt.HashPassword(Model.Password)
