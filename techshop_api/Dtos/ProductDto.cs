@@ -7,7 +7,7 @@
         public string? Description { get; set; }
         public decimal Price { get; set; }
         public string? Brand { get; set; }
-        public string? ImageData { get; set; }
+        public string? Image { get; set; }
         public int Availability { get; set; }
     }
 }
