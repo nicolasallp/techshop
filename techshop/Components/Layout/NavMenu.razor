@@ -1,5 +1,5 @@
 ﻿@inject IHttpContextAccessor accessor
-@inject CartDI CartCounter
+@inject CartState CartCounter
 @rendermode InteractiveServer
 
 <header class="bg-gray-800 text-white">
@@ -49,7 +49,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        CartCounter.OnDataSent += ((count) => { CartsCount = count; StateHasChanged(); });
+        CartCounter.OnChange += ((count) => { CartsCount = count; StateHasChanged(); });
 
         AuthenticatedUserId = accessor.HttpContext?.User.FindFirstValue("UserId");
 
