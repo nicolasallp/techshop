@@ -49,7 +49,7 @@
         }
     </div>
 </div>
-<OrderModal CartProducts=@CartProducts UserId=@UserId SubTotal="Math.Round(subTotal, 2)" isVisible="showModal" onClose="() => showModal = false" />
+<OrderModal CartProducts=@CartProducts UserId=@UserId SubTotal="Math.Round(subTotal, 2)" isVisible="@showModal" OnClose="CloseModal" />
 
 @code {
     [Parameter]
@@ -88,5 +88,10 @@
         CartProducts = await ApiRequest.GetData<CartProduct>(RequestURL.CartProducts, UserId!);
         CartCounter.SendCount(CartProducts?.Count ?? 0);
     }
-    //Teste
+
+    private async Task CloseModal()
+    {
+        showModal = false;
+        CartProducts = await ApiRequest.GetData<CartProduct>(RequestURL.CartProducts, UserId!); 
+    }
 }
