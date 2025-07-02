@@ -85,6 +85,22 @@
     [Parameter]
     public string? UserId { get; set; }
 
+    private User? UserData;
+
+    protected override async Task OnInitializedAsync()
+    {
+        UserData = await ApiRequest.GetDataById<User>(RequestURL.Users, UserId);
+
+        if (UserData!.Address1 is not null)
+        {
+            Model.Address1 = UserData.Address1;
+            Model.State = UserData.State;
+            Model.City = UserData.City;
+            Model.PostalCode = UserData.PostalCode;
+            Model.Address2 = UserData.Address2 ?? string.Empty;
+        };
+    }
+
     private async Task FinishOrder()
     {
         foreach (CartProduct cartProduct in CartProducts!)
@@ -103,20 +119,18 @@
             CartCounter.SendCount(CartProducts?.Count ?? 0);
         }
 
-        User? user = await ApiRequest.GetDataById<User>(RequestURL.Users, UserId!);
-
         string addressData = JsonConvert.SerializeObject(new User
         {
             Id = UserId,
-            Name = user!.Name,
-            Email = user.Email,
-            Password = user.Password,
+            Name = UserData!.Name,
+            Email = UserData.Email,
+            Password = UserData.Password,
             Address1 = Model.Address1,
             Address2 = Model.Address2,
             City = Model.City,
             State = Model.State,
             PostalCode = Model.PostalCode,
-            CreatedDate = user.CreatedDate,
+            CreatedDate = UserData.CreatedDate,
         });
         await ApiRequest.UpdateData(RequestURL.Users, UserId!, addressData);
 
