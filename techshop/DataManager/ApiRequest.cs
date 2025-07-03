@@ -17,14 +17,14 @@ namespace techshop.DataManager
             return JsonConvert.DeserializeObject<List<T>>(responseData);
         }
 
-        public static async Task<List<T>?> GetData<T>(string url, string userId)
+        public static async Task<List<T>?> GetData<T>(string url, string? userId)
         {
             HttpResponseMessage response = await HttpClient.GetAsync($"{url}/ByUser/{userId}");
             string responseData = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<List<T>>(responseData);
         }
 
-        public static async Task<T?> GetDataById<T>(string url, string id)
+        public static async Task<T?> GetDataById<T>(string url, string? id)
         {
             HttpResponseMessage response = await HttpClient.GetAsync($"{url}/{id}");
             string responseData = await response.Content.ReadAsStringAsync();
