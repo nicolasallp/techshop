@@ -12,7 +12,7 @@
                 <h5 class="mb-1 font-semibold tracking-tight text-[16px] text-gray-700">@Product.Name</h5>
                 <div class="flex justify-between">
                     <span class="text-lg font-bold text-gray-900">$@Product.Price</span>
-                    <Rating Average="4" Count="695" />
+                    <Rating Average="0" Count="0" />
                 </div>
             </div>
         </a>
@@ -45,9 +45,18 @@
 
     List<CartProduct>? CartProducts;
 
+    protected override async Task OnInitializedAsync()
+    {
+        List<Review>? reviews = await ApiRequest.GetData<Review>(RequestURL.Reviews, Product!.Id);
+
+        if (reviews != null)
+        {
+            Review? review = reviews.Where(r => r.ProductId == Product.Id).FirstOrDefault();
+        }
+    }
+
     private async void AddToCart()
     {
-
         if (IsInCart && CartProduct != null)
         {
             IsInCart = false;
