@@ -86,7 +86,7 @@
     {
         userId = accessor.HttpContext?.User.FindFirstValue("UserId");
         Product = await ApiRequest.GetDataById<Product>(RequestURL.Products, Id!);
-        CartProducts = await ApiRequest.GetData<CartProduct>(RequestURL.CartProducts);
+        CartProducts = await ApiRequest.GetData<CartProduct>(RequestURL.CartProducts, userId);
         CartProduct = CartProducts!.Where((e) => e.ProductId == Product!.Id).FirstOrDefault();
         IsInCart = CartProducts!.Any(c => c.ProductId == Product!.Id);
         if (IsInCart && CartProduct != null)
