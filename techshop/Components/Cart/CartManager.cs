@@ -30,26 +30,5 @@ namespace techshop.Components.Cart
             List<CartProduct>? cartProducts = await ApiRequest.GetData<CartProduct>(RequestURL.CartProducts, userId!);
             cartCounter.SendCount(cartProducts?.Count ?? 0);
         }
-
-        public static async Task UpdateQuantity(int operation, CartProduct? cartProduct)
-        {
-            if (cartProduct == null)
-            {
-                return;
-            }
-            if (cartProduct!.Quantity == 1 && operation < 0)
-            {
-                return;
-            }
-            cartProduct!.Quantity += operation;
-
-            string data = JsonConvert.SerializeObject(new CartProduct
-            {
-                UserId = cartProduct.UserId,
-                ProductId = cartProduct.ProductId,
-                Quantity = cartProduct.Quantity
-            });
-            await ApiRequest.UpdateData(RequestURL.CartProducts, cartProduct.Id!, data);
-        }
     }
 }

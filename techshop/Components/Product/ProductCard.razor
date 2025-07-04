@@ -20,7 +20,7 @@
     <div class="flex">
         <AuthorizeView>
             <Authorized>
-                <button @onclick="AddToCart" class="w-full @(IsInCart ? "bg-gray-200 text-blue-700 hover:bg-gray-300" : "bg-blue-700 text-white hover:bg-blue-600") py-3.5 text-center text-sm font-medium focus:outline-offset-2 focus:outline-black">@(IsInCart ? "Added to cart" : "Add to cart")</button>
+                <button @onclick="CartHandler" class="w-full @(IsInCart ? "bg-gray-200 text-blue-700 hover:bg-gray-300" : "bg-blue-700 text-white hover:bg-blue-600") py-3.5 text-center text-sm font-medium focus:outline-offset-2 focus:outline-black">@(IsInCart ? "Added to cart" : "Add to cart")</button>
             </Authorized>
             <NotAuthorized>
                 <button @onclick='() => NavigationManager.NavigateTo("Login")' class="w-full bg-blue-700 py-3.5 text-center text-sm font-medium text-white hover:bg-blue-600 focus:outline-offset-2 focus:outline-black">Add to cart</button>
@@ -43,8 +43,6 @@
     [Parameter]
     public bool IsInCart { get; set; }
 
-    List<CartProduct>? CartProducts;
-
     protected override async Task OnInitializedAsync()
     {
         List<Review>? reviews = await ApiRequest.GetData<Review>(RequestURL.Reviews, Product!.Id);
@@ -55,29 +53,16 @@
         }
     }
 
-    private async void AddToCart()
+    private async Task CartHandler()
     {
-        if (IsInCart && CartProduct != null)
+        if (!IsInCart)
         {
-            IsInCart = false;
-            await ApiRequest.DeleteData(RequestURL.CartProducts, CartProduct.Id!);
-            CartProducts = await ApiRequest.GetData<CartProduct>(RequestURL.CartProducts, AuthenticatedUserId!);
-            CartCounter.SendCount(CartProducts?.Count ?? 0);
-            return;
+            await CartManager.AddToCart(AuthenticatedUserId, Product, CartProduct, CartCounter);
         }
-
-        IsInCart = true;
-        string data = JsonConvert.SerializeObject(new CartProduct
-            {
-                UserId = AuthenticatedUserId,
-                ProductId = Product!.Id,
-                Quantity = 1
-            });
-
-        await ApiRequest.CreateData(RequestURL.CartProducts, data);
-        CartProducts = await ApiRequest.GetData<CartProduct>(RequestURL.CartProducts, AuthenticatedUserId!);
-        CartCounter.SendCount(CartProducts?.Count ?? 0);
-        CartProduct = CartProducts!.Where(p => p.ProductId == Product!.Id).FirstOrDefault();
-        return;
+        else
+        {
+            await CartManager.DeleteCartProduct(AuthenticatedUserId, CartProduct, CartCounter);
+        }
+        IsInCart = !IsInCart;
     }
 }
