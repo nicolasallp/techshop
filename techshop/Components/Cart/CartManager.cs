@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Newtonsoft.Json;
+using System.ComponentModel;
 using techshop.DataManager;
 using techshop.Models.Entities;
 
@@ -7,34 +8,35 @@ namespace techshop.Components.Cart
 {
     public static class CartManager
     {
-        public static async void AddToCart(string? userId, Models.Entities.Product product, List<CartProduct>? cartProducts, CartProduct? cartProduct, bool isInCart, CartState cartCounter)
+        public static async Task AddToCart(string? userId, Models.Entities.Product? product, CartProduct? cartProduct, CartState cartCounter, int quantity = 1)
         {
-            if (isInCart && cartProduct != null)
-            {
-                isInCart = false;
-                await ApiRequest.DeleteData(RequestURL.CartProducts, cartProduct.Id!);
-                cartProducts = await ApiRequest.GetData<CartProduct>(RequestURL.CartProducts, userId!);
-                cartCounter.SendCount(cartProducts?.Count ?? 0);
-                return;
-            }
-
-            isInCart = true;
             string data = JsonConvert.SerializeObject(new CartProduct
             {
                 UserId = userId,
                 ProductId = product!.Id,
-                Quantity = 1
+                Quantity = quantity
             });
 
             await ApiRequest.CreateData(RequestURL.CartProducts, data);
-            cartProducts = await ApiRequest.GetData<CartProduct>(RequestURL.CartProducts, userId!);
+            List<CartProduct>? cartProducts = await ApiRequest.GetData<CartProduct>(RequestURL.CartProducts, userId!);
             cartCounter.SendCount(cartProducts?.Count ?? 0);
             cartProduct = cartProducts!.Where(p => p.ProductId == product!.Id).FirstOrDefault();
             return;
         }
 
-        public static async Task UpdateQuantity(int operation, CartProduct cartProduct, EventCallback<decimal> onQuantityUpdate)
+        public static async Task DeleteCartProduct(string? userId, CartProduct? cartProduct, CartState cartCounter)
         {
+            await ApiRequest.DeleteData(RequestURL.CartProducts, cartProduct!.Id!);
+            List<CartProduct>? cartProducts = await ApiRequest.GetData<CartProduct>(RequestURL.CartProducts, userId!);
+            cartCounter.SendCount(cartProducts?.Count ?? 0);
+        }
+
+        public static async Task UpdateQuantity(int operation, CartProduct? cartProduct)
+        {
+            if (cartProduct == null)
+            {
+                return;
+            }
             if (cartProduct!.Quantity == 1 && operation < 0)
             {
                 return;
@@ -48,8 +50,6 @@ namespace techshop.Components.Cart
                 Quantity = cartProduct.Quantity
             });
             await ApiRequest.UpdateData(RequestURL.CartProducts, cartProduct.Id!, data);
-
-            await onQuantityUpdate.InvokeAsync(cartProduct.Quantity);
         }
     }
 }

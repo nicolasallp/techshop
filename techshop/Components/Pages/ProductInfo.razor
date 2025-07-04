@@ -21,14 +21,13 @@
                 </div>
                 <p class="text-gray-500">@Product.Description</p>
                 <div class="mt-12 w-fit">
-                    <p class="mb-2 text-center text-gray-500">@CartProduct!.Quantity</p>
+                    <p class="mb-2 text-center text-gray-500">Quantity</p>
                     <div>
-                        <button class="bg-gray-800 px-[12px] font-bold text-white text-[23px] hover:bg-gray-700">-</button>
-                        <span class="mx-4 text-lg font-semibold">1</span>
-                        <button class="bg-blue-700 px-2 font-bold text-white text-[23px] hover:bg-blue-600">+</button>
+                        <button @onclick="() => Quantity = Quantity > 1 ? Quantity-1 : 1" class="rounded bg-gray-800 px-[12px] font-bold text-white text-[23px] hover:bg-gray-700">-</button>
+                        <span class="mx-4 text-lg font-semibold">@Quantity</span>
+                        <button @onclick="() => Quantity++" class="rounded bg-blue-700 px-2 font-bold text-white text-[23px] hover:bg-blue-600">+</button>
                     </div>
-                    <button href="#" class="mt-6 w-full bg-blue-700 py-3 text-center text-sm font-medium text-white hover:bg-blue-600 focus:outline-offset-2 focus:outline-black">Add to cart</button>
-                    <button @onclick="() => CartManager.AddToCart(userId, Product, CartProducts, CartProduct, IsInCart, CartCounter)" class="w-full @(IsInCart ? "bg-gray-200 text-blue-700 hover:bg-gray-300" : "bg-blue-700 text-white hover:bg-blue-600") py-3.5 text-center text-sm font-medium focus:outline-offset-2 focus:outline-black">@(IsInCart ? "Added to cart" : "Add to cart")</button>
+                    <button @onclick="CartHandler" class="mt-2 @(IsInCart ? "bg-gray-200 text-blue-700 hover:bg-gray-300" : "bg-blue-700 text-white hover:bg-blue-600") w-full rounded py-3.5 text-center text-sm font-medium focus:outline-offset-2 focus:outline-black">@(IsInCart ? "Added to cart" : "Add to cart")</button>
                 </div>
             </div>
         </div>
@@ -79,6 +78,7 @@
     private CartProduct? CartProduct = new();
     private List<CartProduct>? CartProducts = new();
     private bool IsInCart;
+    private int Quantity = 1;
 
     string? userId = string.Empty;
 
@@ -88,7 +88,25 @@
         Product = await ApiRequest.GetDataById<Product>(RequestURL.Products, Id!);
         CartProducts = await ApiRequest.GetData<CartProduct>(RequestURL.CartProducts);
         CartProduct = CartProducts!.Where((e) => e.ProductId == Product!.Id).FirstOrDefault();
-        IsInCart= CartProducts!.Any(c => c.ProductId == Product!.Id);
+        IsInCart = CartProducts!.Any(c => c.ProductId == Product!.Id);
+        if (IsInCart && CartProduct != null)
+        {
+            Quantity = CartProduct.Quantity;
+        }
+    }
+
+    private async Task CartHandler()
+    {
+        if (!IsInCart)
+        {
+            await CartManager.AddToCart(userId, Product, CartProduct, CartCounter, Quantity);
+        }
+        else
+        {
+            await CartManager.DeleteCartProduct(userId, CartProduct, CartCounter);
+            Quantity = 1;
+        }
+        IsInCart = !IsInCart;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -98,4 +116,5 @@
             await JSRuntime.InvokeVoidAsync("eval", "window.scrollTo(0, 0);");
         }
     }
+
 }

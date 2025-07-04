@@ -23,7 +23,7 @@
             {
                 foreach (CartProduct cart in CartProducts)
                 {
-                    <CartProductCard CartProduct="cart" OnCartDelete="DeleteCartProduct" OnQuantityUpdate="UpdateQuantity" />
+                    <CartProductCard CartProduct="cart" OnCartDelete="DeleteCartProduct" OnQuantityUpdate="UpdateSubTotal" />
 
                 }
                 <div class="mb-6 flex items-center justify-between">
@@ -75,7 +75,7 @@
         CartProducts!.ForEach(c => subTotal += c.Product!.Price * c.Quantity);
     }
 
-    private async Task UpdateQuantity(decimal quantity)
+    private async Task UpdateSubTotal(decimal quantity)
     {
         subTotal = 0;
         CartProducts = await ApiRequest.GetData<CartProduct>(RequestURL.CartProducts, UserId!);
