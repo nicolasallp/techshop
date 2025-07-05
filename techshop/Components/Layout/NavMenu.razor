@@ -17,7 +17,7 @@
                         <AuthorizeView>
                             <Authorized>
                                 <a class="hover:underline" 
-                                href='@($"Cart/{AuthenticatedUserId}")'>CART (@CartsCount)</a>
+                                href='@($"/Cart/{AuthenticatedUserId}")'>CART (@CartsCount)</a>
                             </Authorized>
                             <NotAuthorized>
                                 <a class="hover:underline"
@@ -31,10 +31,10 @@
             <div class="flex items-center gap-4">
                 <AuthorizeView>
                     <Authorized>
-                        <a href="Logout" class="bg-[#2e58d7] px-5 py-2 text-white hover:bg-[#416beb] active:bg-blue-800">Logout</a>
+                        <a href="Logout" class="rounded bg-[#2e58d7] px-5 py-2 text-white hover:bg-[#416beb] active:bg-blue-800">Logout</a>
                     </Authorized>
                     <NotAuthorized>
-                        <a href="Login" class="bg-[#2e58d7] px-5 py-2 text-white hover:bg-[#416beb] active:bg-blue-800">Login</a>
+                        <a href="Login" class="rounded bg-[#2e58d7] px-5 py-2 text-white hover:bg-[#416beb] active:bg-blue-800">Login</a>
                     </NotAuthorized>
                 </AuthorizeView> 
 
