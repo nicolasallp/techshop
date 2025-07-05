@@ -3,6 +3,7 @@
 @rendermode InteractiveServer
 @inject IHttpContextAccessor accessor
 @inject CartState CartCounter
+@inject NavigationManager navigation
 
 <PageTitle>@Product!.Name | Techshop</PageTitle>
 
@@ -80,15 +81,19 @@
     private bool IsInCart;
     private int Quantity = 1;
 
-    string? userId = string.Empty;
+    string? userId;
 
     protected override async Task OnInitializedAsync()
     {
         userId = accessor.HttpContext?.User.FindFirstValue("UserId");
         Product = await ApiRequest.GetDataById<Product>(RequestURL.Products, Id!);
-        CartProducts = await ApiRequest.GetData<CartProduct>(RequestURL.CartProducts, userId);
-        CartProduct = CartProducts!.Where((e) => e.ProductId == Product!.Id).FirstOrDefault();
-        IsInCart = CartProducts!.Any(c => c.ProductId == Product!.Id);
+        if (userId != null)
+        {
+            CartProducts = await ApiRequest.GetData<CartProduct>(RequestURL.CartProducts, userId);
+            CartProduct = CartProducts!.Where((e) => e.ProductId == Product!.Id).FirstOrDefault();
+            IsInCart = CartProducts!.Any(c => c.ProductId == Product!.Id);
+        }
+
         if (IsInCart && CartProduct != null)
         {
             Quantity = CartProduct.Quantity;
@@ -97,6 +102,11 @@
 
     private async Task CartHandler()
     {
+        if (userId == null)
+        {
+            navigation.NavigateTo("/Login");
+            return;
+        }
         if (!IsInCart)
         {
             await CartManager.AddToCart(userId, Product, CartProduct, CartCounter, Quantity);
